@@ -1,0 +1,3 @@
+
+ [alias]
+         lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %C(blue)<%an>%Creset %s %Cgreen(%cr)' --abbrev-commit --date=relative
