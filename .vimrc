@@ -70,14 +70,15 @@ autocmd FileType text setlocal textwidth=80
 " Setup Global Rainbow Parentheses
 " Fight the Heathens!
 
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+
 set number
 
 function SetClojureOptions()
 	set filetype=clojure
-	au VimEnter * RainbowParenthesesToggle
-	au Syntax * RainbowParenthesesLoadRound
-	au Syntax * RainbowParenthesesLoadSquare
-	au Syntax * RainbowParenthesesLoadBraces
 endfunction
 autocmd BufNewFile,BufRead *.clj call SetClojureOptions()
  
