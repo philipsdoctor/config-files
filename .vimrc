@@ -70,9 +70,48 @@ autocmd FileType text setlocal textwidth=80
 " Setup Global Rainbow Parentheses
 " Fight the Heathens!
 
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
+set number
 
+function SetClojureOptions()
+	set filetype=clojure
+	au VimEnter * RainbowParenthesesToggle
+	au Syntax * RainbowParenthesesLoadRound
+	au Syntax * RainbowParenthesesLoadSquare
+	au Syntax * RainbowParenthesesLoadBraces
+endfunction
+autocmd BufNewFile,BufRead *.clj call SetClojureOptions()
+ 
+""" not really a repl, but good enough for feedback
+function SetClojurePyOptions()
+	call SetClojureOptions()
+	map <Leader>r :!clojurepy %<CR>
+endfunction
+ 
+ 
+function VimuxSlime()
+	if !exists("g:VimuxRunnerIndex") || _VimuxHasRunner(g:VimuxRunnerIndex) == -1
+		call VimuxOpenRunner()
+	endif
 
+	call VimuxSendText(@v)
+	call VimuxSendKeys("Enter")
+endfunction
+""
+let mapleader = ","
+let maplocalleader = ",,"
+map <Leader>vi :VimuxInspectRunner<CR>
+map <Leader>vq :VimuxCloseRunner<CR>
+map <Leader>vx :VimuxInterruptRunner<VR>
+vmap <Leader>vs "vy :call VimuxSlime()<CR>
+nmap <Leader>vs vip<Leader>vs<CR>
+" eval the outermost form
+nmap <LocalLeader>e vaF<Leader>vs<CR>
+" eval the current form
+nmap <LocalLeader>E va(<Leader>vs<CR>
+" eval the buffer
+nmap <LocalLeader>b ggVG<Leader>vs<CR>
+""
+ 
+autocmd BufRead,BufNewFile *.cljpy call SetClojurePyOptions()
+autocmd BufRead,BufNewFile *.cljs call SetClojureOptions()
+autocmd BufRead,BufNewFile *.cljx call SetClojureOptions()
