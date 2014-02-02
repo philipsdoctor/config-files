@@ -22,7 +22,7 @@ NeoBundle 'benmills/vimux'               " tmux integration
 NeoBundle 'altercation/vim-colors-solarized' " solarized colorscheme
 NeoBundle 'scrooloose/syntastic'         " Syntax checking
 NeoBundle 'majutsushi/tagbar'            " tagbar
-NeoBundle 'bitc/vim-hdevtools'
+NeoBundle 'bitc/vim-hdevtools'           " hdevtools integration for Haskell
 
  " If there are uninstalled bundles found on startup,
  " this will conveniently prompt you to install them.
@@ -120,12 +120,9 @@ function SetHaskellOptions()
    au BufWrite *.hs if exists('b:slime_config') | SlimeSend1 :r 
     
    " Type inspection
+   " Hit F1 over something to see its type
    nmap <F1> :HdevtoolsType<CR>
-   nmap <F2> :HdevtoolsInfo<CR>
-   nmap <F3> :HdevtoolsClear<CR>
-   " Linting/Checking
-   nmap <F4> :GhcModLint<CR>
-   nmap <F5> :GhcModCheck<CR>
+   nmap <silent> <F2> :HdevtoolsClear<CR>
 endfunction
 
 autocmd BufNewFile,BufRead *.hs call SetHaskellOptions()
