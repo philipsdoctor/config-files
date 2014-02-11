@@ -1,221 +1,148 @@
-;; Emacs LIVE
-;;
-;; This is where everything starts. Do you remember this place?
-;; It remembers you...
+;; Quiet Startup
+(setq inhibit-splash-screen t             ; No splash screen
+      initial-scratch-message nil         ; No scratch message
+      )
+(tool-bar-mode -1)                        ; No tool-bar
+(scroll-bar-mode -1)                      ; No scrollbar (TODO: Change me?)
 
-(add-to-list 'command-switch-alist
-             (cons "--live-safe-mode"
-                   (lambda (switch)
-                     nil)))
-
-(setq live-safe-modep
-      (if (member "--live-safe-mode" command-line-args)
-          "debug-mode-on"
-        nil))
-
-(setq initial-scratch-message "
-;; I'm sorry, Emacs Live failed to start correctly.
-;; Hopefully the issue will be simple to resolve.
-;;
-;; First up, could you try running Emacs Live in safe mode:
-;;
-;;    emacs --live-safe-mode
-;;
-;; This will only load the default packs. If the error no longer occurs
-;; then the problem is probably in a pack that you are loading yourself.
-;; If the problem still exists, it may be a bug in Emacs Live itself.
-;;
-;; In either case, you should try starting Emacs in debug mode to get
-;; more information regarding the error:
-;;
-;;    emacs --debug-init
-;;
-;; Please feel free to raise an issue on the Gihub tracker:
-;;
-;;    https://github.com/overtone/emacs-live/issues
-;;
-;; Alternatively, let us know in the mailing list:
-;;
-;;    http://groups.google.com/group/emacs-live
-;;
-;; Good luck, and thanks for using Emacs Live!
-;;
-;;                _.-^^---....,,--
-;;            _--                  --_
-;;           <          SONIC         >)
-;;           |       BOOOOOOOOM!       |
-;;            \._                   _./
-;;               ```--. . , ; .--'''
-;;                     | |   |
-;;                  .-=||  | |=-.
-;;                  `-=#$%&%$#=-'
-;;                     | ;  :|
-;;            _____.,-#%&$@%#&#~,._____
-;;      May these instructions help you raise
-;;                  Emacs Live
-;;                from the ashes
-")
-
-(setq live-supported-emacsp t)
-
-(when (version< emacs-version "24.3")
-  (setq live-supported-emacsp nil)
-  (setq initial-scratch-message (concat "
-;;                _.-^^---....,,--
-;;            _--                  --_
-;;           <          SONIC         >)
-;;           |       BOOOOOOOOM!       |
-;;            \._                   _./
-;;               ```--. . , ; .--'''
-;;                     | |   |
-;;                  .-=||  | |=-.
-;;                  `-=#$%&%$#=-'
-;;                     | ;  :|
-;;            _____.,-#%&$@%#&#~,._____
-;;
-;; I'm sorry, Emacs Live is only supported on Emacs 24.3+.
-;;
-;; You are running: " emacs-version "
-;;
-;; Please upgrade your Emacs for full compatibility.
-;;
-;; Latest versions of Emacs can be found here:
-;;
-;; OS X GUI     - http://emacsformacosx.com/
-;; OS X Console - via homebrew (http://mxcl.github.com/homebrew/)
-;;                brew install emacs
-;; Windows      - http://alpha.gnu.org/gnu/emacs/windows/
-;; Linux        - Consult your package manager or compile from source
-
-"))
-  (let* ((old-file (concat (file-name-as-directory "~") ".emacs-old.el")))
-    (if (file-exists-p old-file)
-      (load-file old-file)
-      (error (concat "Oops - your emacs isn't supported. Emacs Live only works on Emacs 24.3+ and you're running version: " emacs-version ". Please upgrade your Emacs and try again, or define ~/.emacs-old.el for a fallback")))))
-
-(let ((emacs-live-directory (getenv "EMACS_LIVE_DIR")))
-  (when emacs-live-directory
-    (setq user-emacs-directory emacs-live-directory)))
-
-(when live-supported-emacsp
-;; Store live base dirs, but respect user's choice of `live-root-dir'
-;; when provided.
-(setq live-root-dir (if (boundp 'live-root-dir)
-                          (file-name-as-directory live-root-dir)
-                        (if (file-exists-p (expand-file-name "manifest.el" user-emacs-directory))
-                            user-emacs-directory)
-                        (file-name-directory (or
-                                              load-file-name
-                                              buffer-file-name))))
-
-(setq
- live-tmp-dir      (file-name-as-directory (concat live-root-dir "tmp"))
- live-etc-dir      (file-name-as-directory (concat live-root-dir "etc"))
- live-pscratch-dir (file-name-as-directory (concat live-tmp-dir  "pscratch"))
- live-lib-dir      (file-name-as-directory (concat live-root-dir "lib"))
- live-packs-dir    (file-name-as-directory (concat live-root-dir "packs"))
- live-autosaves-dir(file-name-as-directory (concat live-tmp-dir  "autosaves"))
- live-backups-dir  (file-name-as-directory (concat live-tmp-dir  "backups"))
- live-custom-dir   (file-name-as-directory (concat live-etc-dir  "custom"))
- live-load-pack-dir nil
- live-disable-zone nil)
-
-;; create tmp dirs if necessary
-(make-directory live-etc-dir t)
-(make-directory live-tmp-dir t)
-(make-directory live-autosaves-dir t)
-(make-directory live-backups-dir t)
-(make-directory live-custom-dir t)
-(make-directory live-pscratch-dir t)
-
-;; Load manifest
-(load-file (concat live-root-dir "manifest.el"))
-
-;; load live-lib
-(load-file (concat live-lib-dir "live-core.el"))
-
-;;default packs
-(let* ((pack-names '("foundation-pack"
-                     "colour-pack"
-                     "clojure-pack"
-                     "lang-pack"
-                     "power-pack"
-                     "git-pack"
-                     "org-pack"
-                     "bindings-pack"))
-       (live-dir (file-name-as-directory "live"))
-       (dev-dir  (file-name-as-directory "dev")))
-  (setq live-packs (mapcar (lambda (p) (concat live-dir p)) pack-names) )
-  (setq live-dev-pack-list (mapcar (lambda (p) (concat dev-dir p)) pack-names) ))
-
-;; Helper fn for loading live packs
-
-(defun live-version ()
+;; Switch to other buffer
+(defun switch-to-previous-buffer ()
+  "toggle between this and previous buffer"
   (interactive)
-  (if (called-interactively-p 'interactive)
-      (message "%s" (concat "This is Emacs Live " live-version))
-    live-version))
+  (switch-to-buffer (other-buffer)))
+(global-set-key (kbd "C-\\") 'switch-to-previous-buffer)
 
-;; Load `~/.emacs-live.el`. This allows you to override variables such
-;; as live-packs (allowing you to specify pack loading order)
-;; Does not load if running in safe mode
-(let* ((pack-file (concat (file-name-as-directory "~") ".emacs-live.el")))
-  (if (and (file-exists-p pack-file) (not live-safe-modep))
-      (load-file pack-file)))
+;; Utility Functions
+(defun filter (condp lst)
+  "Filter a list of elements with a given predicate"
+  (delq nil
+	(mapcar (lambda (x) (and (funcall condp x) x)) lst)))
 
-;; Load all packs - Power Extreme!
-(mapcar (lambda (pack-dir)
-          (live-load-pack pack-dir))
-        (live-pack-dirs))
+;;;; TODO: Doesn't work :(
+;(defun comp (&rest funs)
+;  "Return function composed of funs (ie, Haskell Curry's C combinator)"
+;  (lexical-let ((lex-funs funs))
+;    (lambda (&rest args)
+;      (reduce 'funcall (butlast lex-funs)
+;              :from-end t
+;              :initial-value (apply (car (last lex-funs)) args)))))
 
-(setq live-welcome-messages
-      (if (live-user-first-name-p)
-          (list (concat "Hello " (live-user-first-name) ", somewhere in the world the sun is shining for you right now.")
-                (concat "Hello " (live-user-first-name) ", it's lovely to see you again. I do hope that you're well.")
-                (concat (live-user-first-name) ", turn your head towards the sun and the shadows will fall behind you.")
-                )
-        (list  "Hello, somewhere in the world the sun is shining for you right now."
-               "Hello, it's lovely to see you again. I do hope that you're well."
-               "Turn your head towards the sun and the shadows will fall behind you.")))
+(defun add-multiple-hooks (hooks function)
+  "Adds a function to multiple hooks"
+  (mapc (lambda (hook)
+          (add-hook hook function))
+        hooks))
 
+;; Yes and No
+;;;; Nobody likes to have to type out the full yes or no when Emacs asks. Which it does quite often. Make it one character.
+(defalias 'yes-or-no-p 'y-or-n-p)
 
-(defun live-welcome-message ()
-  (nth (random (length live-welcome-messages)) live-welcome-messages))
+;;;; TODO: Partial function evaluation, thrush macros
 
-(when live-supported-emacsp
-  (setq initial-scratch-message (concat ";;
-;;     MM\"\"\"\"\"\"\"\"`M
-;;     MM  mmmmmmmM
-;;     M`      MMMM 88d8b.d8b. .d8888b. .d8888b. .d8888b.
-;;     MM  MMMMMMMM 88''88'`88 88'  `88 88'  `\"\" Y8ooooo.
-;;     MM  MMMMMMMM 88  88  88 88.  .88 88.  ...       88
-;;     MM        .M dP  dP  dP `88888P8 '88888P' '88888P'
-;;     MMMMMMMMMMMM
-;;
-;;         M\"\"MMMMMMMM M\"\"M M\"\"MMMMM\"\"M MM\"\"\"\"\"\"\"\"`M
-;;         M  MMMMMMMM M  M M  MMMMM  M MM  mmmmmmmM
-;;         M  MMMMMMMM M  M M  MMMMP  M M`      MMMM
-;;         M  MMMMMMMM M  M M  MMMM' .M MM  MMMMMMMM
-;;         M  MMMMMMMM M  M M  MMP' .MM MM  MMMMMMMM
-;;         M         M M  M M     .dMMM MM        .M
-;;         MMMMMMMMMMM MMMM MMMMMMMMMMM MMMMMMMMMMMM  Version " live-version
-                                                                (if live-safe-modep
-                                                                    "
-;;                                                     --*SAFE MODE*--"
-                                                                  "
-;;"
-                                                                  ) "
-;;           http://github.com/overtone/emacs-live
-;;
-;; "                                                      (live-welcome-message) "
+;; Use package system
+(require 'package)
+(add-to-list 'package-archives '("MELPA" . "http://melpa.milkbox.net/packages/" ) t)
+(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
+(package-initialize)
 
-")))
-)
+;;;; my-Packages
+(setq my-packages
+      '(auto-complete autopair cider color-theme evil goto-last-change haskell-mode hy-mode main-line maxframe nrepl-ritz nrepl clojure-mode paredit pkg-info epl popup rainbow-delimiters smex undo-tree flycheck-hdevtools))
 
-(if (not live-disable-zone)
-    (add-hook 'term-setup-hook 'zone))
+;;;; Install my-packages as necessary
+(let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x))) my-packages)))
+  (when (and (not (equal uninstalled-packages '()))
+	     (y-or-n-p (format "Install packages %s?"  uninstalled-packages)))
+    (package-refresh-contents)
+    (mapc 'package-install uninstalled-packages)))
 
-(if (not custom-file)
-    (setq custom-file (concat live-custom-dir "custom-configuration.el")))
-(when (file-exists-p custom-file)
-  (load custom-file))
+;;;; Configure window system
+(when window-system
+  (setq default-directory "~"             ; Default directory is home directory
+	mouse-wheel-scroll-amount '(1)    ; Scroll slowly
+	mouse-wheel-progressive-speed nil ; Don't change scrolling speed
+	)
+  (global-set-key [C-tab] 'other-window)  ; C-tab Goes to other window
+  ;; Theming for window mode only
+  (load-theme 'wombat t)
+  ;; Transparency
+  (set-frame-parameter (selected-frame) 'alpha '(95 95))
+  (add-to-list 'default-frame-alist '(alpha 95 95))
+  ;; Use Anonymous Pro font
+  (custom-set-faces '(default ((t (:height 160 :family "Anonymous Pro Minus")))))
+  ;; Maximize frame by default
+  (maximize-frame))
+
+;; Evil mode
+(require 'evil)
+;;; Turn on/off evil mode here
+;(add-multiple-hooks '(haskell-mode-hook clojure-mode-hook hy-mode-hook emacs-lisp-mode-hook) 'evil-mode)
+(setq evil-default-cursor t)
+
+;;; Custom behavior to keep EviL from zealously killing all of my buffers
+(defun save-and-kill-buffer ()
+  (interactive)
+  (save-buffer)
+  (kill-buffer))
+
+(define-key evil-normal-state-map "ZZ" 'save-and-kill-buffer)
+(define-key evil-normal-state-map "ZQ" 'evil-delete-buffer)
+(evil-ex-define-cmd "q[uit]" 'evil-delete-buffer)
+(evil-ex-define-cmd "wq" 'save-and-kill-buffer)
+
+;; Rainbow delimiters
+(require 'rainbow-delimiters)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+;;;; Set the colors for rainbow-delimiters mode
+(set-face-background 'rainbow-delimiters-unmatched-face "red")
+(set-face-foreground 'rainbow-delimiters-unmatched-face "black")
+(set-face-foreground 'rainbow-delimiters-depth-1-face "#5558dd")
+(set-face-foreground 'rainbow-delimiters-depth-2-face "#41a640")
+(set-face-foreground 'rainbow-delimiters-depth-3-face "#aa7f00")
+(set-face-foreground 'rainbow-delimiters-depth-4-face "#873F88")
+(set-face-foreground 'rainbow-delimiters-depth-5-face "#50aea8")
+(set-face-foreground 'rainbow-delimiters-depth-6-face "#e0e003")
+(set-face-foreground 'rainbow-delimiters-depth-7-face "#f05850")
+(set-face-foreground 'rainbow-delimiters-depth-8-face "#0050bb")
+(set-face-foreground 'rainbow-delimiters-depth-9-face "#bbbbbb")
+
+;; show-paren-mode
+(require 'paren)
+(set-face-background 'show-paren-match "white")
+(add-hook 'prog-mode-hook 'show-paren-mode)
+
+;; Remember our place
+(require 'saveplace)
+(setq-default save-place t)
+(setq save-place-file "~/.emacs.d/saved-places")
+
+;; Autopair mode
+(require 'autopair)
+(add-hook 'prog-mode-hook 'autopair-mode)
+
+;; Emacs Lisp mode
+;;;; Use light-table's command-return for evaluating in emacs itself
+(define-key emacs-lisp-mode-map (kbd "<s-return>") 'eval-last-sexp)
+
+;; Autocomplete mode
+(require 'auto-complete)
+(global-auto-complete-mode)
+
+;; Clojure mode
+(require 'clojure-mode)
+;;;; Use light-table's command-return for evaluating in the REPL
+(define-key clojure-mode-map (kbd "<s-return>") 'nrepl-eval-last-expression)
+
+;; Display line number
+(add-hook 'prog-mode-hook 'linum-mode)
+
+;; IDO mode
+;; A nice way to navigate the filesystem
+(ido-mode t)
+(setq ido-enable-flex-matching t
+      ido-use-virtual-buffers t)
+
+;; Hy mode
+(require 'hy-mode)
+;;;; Use light-table's command-return for evaluating in the REPL
+(define-key hy-mode-map (kbd "<s-return>") 'lisp-eval-last-sexp)
