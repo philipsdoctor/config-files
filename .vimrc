@@ -115,7 +115,7 @@ function SetHaskellOptions()
    
    " Slime stuff
    " Load the current file into the REPL
-   nmap <c-c><c-l> :exec("SlimeSend1 :l " . expand('%:p'))<CR>
+   nmap <silent> <c-c><c-l> :exec("SlimeSend1 :l " . expand('%:p'))<CR>
    " If we are connected to slime, reload files on write
    au BufWrite *.hs if exists('b:slime_config') | SlimeSend1 :r 
     
