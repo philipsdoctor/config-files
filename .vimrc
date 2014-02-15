@@ -5,6 +5,12 @@ if has('vim_starting')
 endif
 call neobundle#rc(expand('~/.vim/bundle/'))
 NeoBundleFetch 'Shougo/neobundle.vim'
+NeoBundle 'Shougo/vimproc', {
+\    'build' : {
+\        'unix': 'make -f make_unix.mak',
+\        'mac': 'make -f make_mac.mak',
+\    },
+\}
 
 " My Bundles here:
 NeoBundle 'jpalardy/vim-slime'
@@ -17,12 +23,26 @@ NeoBundle 'mattn/webapi-vim'             " support for gist-vim
 NeoBundle 'mattn/gist-vim'               " :Gist
 NeoBundle 'Lokaltog/vim-powerline'       " status info
 NeoBundle 'kien/rainbow_parentheses.vim' " Rainbow parens!
+NeoBundle 'https://bitbucket.org/kovisoft/paredit' " paredit for greatness
 NeoBundle 'tpope/vim-surround'           " Handy selection
 NeoBundle 'benmills/vimux'               " tmux integration
 NeoBundle 'altercation/vim-colors-solarized' " solarized colorscheme
 NeoBundle 'scrooloose/syntastic'         " Syntax checking
 NeoBundle 'majutsushi/tagbar'            " tagbar
 NeoBundle 'bitc/vim-hdevtools'           " hdevtools integration for Haskell
+NeoBundle 'guns/vim-clojure-static'      " syntax file
+NeoBundle 'tpope/vim-fireplace'          " nREPL client
+NeoBundle 'hylang/vim-hy'                " syntax file
+NeoBundle 'tpope/vim-classpath'          " mvn/lein classpath stuff
+
+NeoBundle 'ivanov/vim-ipython'
+let g:ipy_perform_mappings = 1 " vim-ipython is weird
+
+" Tab to complete
+NeoBundle 'ervandew/supertab'	
+let g:SuperTabDefaultCompletionType = "context"
+let g:SuperTabContextDefaultCompletionType = "<c-x><c-o>"
+
 
  " If there are uninstalled bundles found on startup,
  " this will conveniently prompt you to install them.

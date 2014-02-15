@@ -1,0 +1,13 @@
+CHANGELOG.md
+LICENSE.txt
+README.md
+etc/
+installer/
+lib/
+manifest.el
+packs/
+tmp/
+elpa/
+.*.swp
+saved-places
+ac-comphist.dat
