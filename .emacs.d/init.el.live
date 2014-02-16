@@ -267,4 +267,12 @@
 (global-set-key (kbd "C-x C-z") 'zoom-window-zoom)
 (setq zoom-window-mode-line-color "DarkGreen")
 
+;; Switch to other buffer
+(defun switch-to-previous-buffer ()
+  "toggle between this and previous buffer"
+  (interactive)
+  (switch-to-buffer (other-buffer)))
+
+(global-set-key (kbd "C-\\") 'switch-to-previous-buffer)
+
 (message "\n\n Pack loading completed. Your Emacs is Live...\n\n")
