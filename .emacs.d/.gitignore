@@ -11,3 +11,6 @@ elpa/
 .*.swp
 saved-places
 ac-comphist.dat
+auto-save-list/
+ido.last
+ido.last~
