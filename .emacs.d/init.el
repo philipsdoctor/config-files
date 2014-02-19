@@ -4,9 +4,10 @@
 
 ;;; Code:
 ;; Quiet Startup
-(setq inhibit-splash-screen t             ; No splash screen
-      initial-scratch-message nil         ; No scratch message
+(setq inhibit-splash-screen t          ; No splash screen
+      initial-scratch-message nil      ; No scratch message
       )
+
 (when window-system
   (tool-bar-mode -1)                      ; No tool-bar
   (scroll-bar-mode -1)                    ; No scrollbar
@@ -16,6 +17,14 @@
 (defun filter (pred lst)
   "Filter a list LST of elements with a given predicate PRED"
   (delq nil (mapcar (lambda (x) (and (funcall pred x) x)) lst)))
+
+(defun set-exec-path-from-shell-PATH ()
+  "Set up Emacs' `exec-path' and PATH environment variable to match that used by the user's shell.
+     This is particularly useful under Mac OSX, where GUI apps are not started from a shell."
+  (interactive)
+  (let ((path-from-shell (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
+    (setenv "PATH" path-from-shell)
+    (setq exec-path (split-string path-from-shell path-separator))))
 
 (defun add-multiple-hooks (hooks function)
   "Adds a function to multiple hooks"
@@ -34,7 +43,7 @@
 ;;;; my-packages
 (defvar my-packages)
 (setq my-packages
-      '(auto-complete autopair cider color-theme evil goto-last-change haskell-mode hy-mode main-line maxframe nrepl clojure-mode paredit epl popup rainbow-delimiters smex undo-tree flycheck flycheck-hdevtools kibit-mode auto-indent-mode smartparens dash-at-point))
+      '(auto-complete autopair cider color-theme evil goto-last-change haskell-mode hy-mode main-line maxframe nrepl clojure-mode epl popup rainbow-delimiters smex undo-tree flycheck flycheck-hdevtools kibit-mode smartparens auto-indent-mode dash-at-point))
 
 ;;;; Install my-packages as necessary
 (let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x))) my-packages)))
@@ -52,16 +61,21 @@
 	mouse-wheel-scroll-amount '(1)    ; Scroll slowly
 	mouse-wheel-progressive-speed nil ; Don't change scrolling speed
 	)
-  (global-set-key [C-tab] 'other-window)  ; C-tab Goes to other window
   ;; Theming for window mode only
   (load-theme 'wombat t)
   ;; Transparency
   (set-frame-parameter (selected-frame) 'alpha '(95 95))
   (add-to-list 'default-frame-alist '(alpha 95 95))
   ;; Use Anonymous Pro font
-  (custom-set-faces '(default ((t (:height 160 :family "Anonymous Pro Minus")))))
+  (custom-set-faces '(default ((t (:height 180 :family "Anonymous Pro Minus")))))
   ;; Maximize frame by default
-  (maximize-frame))
+  (maximize-frame)
+  ;; Manipulate font size with usual bindings
+  ;;;; To return to default font size, <C-x C-0>
+  (global-set-key (kbd "s-=") 'text-scale-increase)
+  (global-set-key (kbd "s--") 'text-scale-decrease)
+  (set-exec-path-from-shell-PATH)
+  )
 
 ;; Switch to other buffer
 (defun switch-to-previous-buffer ()
@@ -70,6 +84,12 @@
   (switch-to-buffer (other-buffer)))
 (global-set-key (kbd "C-\\") 'switch-to-previous-buffer)
 
+;; C-tab Goes to other window
+(global-set-key [C-tab] 'other-window)
+
+;; Auto-indent mode
+(require 'auto-indent-mode)
+
 ;; Flycheck mode
 (require 'flycheck)
 
@@ -77,9 +97,8 @@
 (require 'evil)
 ;;;; Turn on/off evil-mode here
 (add-multiple-hooks '(haskell-mode-hook clojure-mode-hook hy-mode-hook emacs-lisp-mode-hook) 'evil-mode)
-;;;; BUG: Using evil-mode in Emacs results in the cursor color staying black no matter what theme you use. Work around:
 (setq evil-default-cursor t)
-;;;; Custom behavior to keep evil from zealously killing emacs when in window-system
+;;;; Custom behavior to keep EviL from zealously killing emacs when in window-system
 (when window-system
   (defun save-and-kill-buffer ()
     (interactive)
@@ -91,27 +110,8 @@
   (evil-ex-define-cmd "q[uit]" 'evil-delete-buffer)
   (evil-ex-define-cmd "wq" 'save-and-kill-buffer))
 
-
-;; TODO: Doesn't work
-(defmacro define-eval-key
-  (mode-map key eval-last-sexp-function eval-region-function)
-  "Create evil key bindings for setting up an evaluation key"
-  `(define-key ,mode-map ,key
-     (lambda ()
-       (interactive)
-       (cond
-	((and transient-mark-mode mark-active) (message (funcall ,eval-region-function (point) (mark))))
-	((equal evil-state 'normal) (funcall ,eval-last-sexp-function (point)))
-	 )
-	(t (funcall ,eval-last-sexp-function (point))))))
-
-;; Auto-indent-mode
-(require 'auto-indent-mode)
-;;;; Hack >> and << to just indent region when in auto-indent-mode
-(add-hook 'auto-indent-mode-hook
-	  (lambda () 
-	    (define-key evil-normal-state-map "<" 'indent-region)
-	    (define-key evil-normal-state-map ">" 'indent-region)))
+(require 'dash-at-point)
+(add-hook 'prog-mode-hook (lambda () (define-key evil-normal-state-map "?" 'dash-at-point)))
 
 ;; Rainbow delimiters
 (require 'rainbow-delimiters)
@@ -156,9 +156,22 @@
 ;; Emacs Lisp mode
 ;;;; Use light-table's command-return for evaluating in emacs itself
 ;;;; TODO: Make smarter
-(define-key emacs-lisp-mode-map (kbd "<s-return>") 'eval-last-sexp)
-(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)    ; On-the-fly linting
-(add-hook 'emacs-lisp-mode-hook 'auto-indent-mode) ; Automatic indenting
+(define-key emacs-lisp-mode-map (kbd "<s-return>") 'eval-last-sexp)  
+(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)                      ; flycheck-mode 
+(add-hook 'emacs-lisp-mode-hook 'auto-indent-mode)                   ; auto-indent-mode 
+(add-hook 'emacs-lisp-mode-hook
+	  (lambda ()
+	    (smartparens-mode 1)                                     ; better than paredit mode
+	    (autopair-mode 0)                                        ; incompatible with smartparens-mode
+	    ))
+;;;; Clever hack so lambda shows up as λ
+(font-lock-add-keywords
+ 'emacs-lisp-mode
+ '(("(\\(lambda\\)\\>"
+    (0 (prog1 ()
+	 (compose-region (match-beginning 1)
+			 (match-end 1)
+			 ?λ))))))
 
 ;; Autocomplete mode
 (require 'auto-complete)
@@ -167,14 +180,37 @@
 ;; Clojure mode
 (require 'clojure-mode)
 ;;;; Use light-table's command-return for evaluating in the REPL
-;;;; TODO: Make smarter, and jigger slightly
-(define-key clojure-mode-map (kbd "<s-return>") 'nrepl-eval-last-expression)
-;;;; Use kibit for on the fly linting
+;;;; TODO: Make smarter
+(define-key clojure-mode-map (kbd "<s-return>") 'cider-eval-last-expression)
+;;;; Use kibit for on the fly static analysis
 (eval-after-load 'flycheck '(require 'kibit-mode))
 (add-hook 'clojure-mode-hook 'flycheck-mode)
-;;;; Automatic linting
-(add-hook 'clojure-mode-hook 'auto-indent-mode)
-;;;; TODO: Fix jump to definition for evil meta state
+;;;; Smartparens mode
+(add-hook 'clojure-mode-hook
+	  (lambda ()
+	    (smartparens-mode 1)  ; better than paredit mode
+	    (autopair-mode 0)     ; incompatible with smartparens-mode
+	    ))
+;;;; Clever hack so fn shows up as λ
+(font-lock-add-keywords
+ 'clojure-mode '(("(\\(fn\\)[\[[:space:]]"
+		  (0 (progn (compose-region (match-beginning 1)
+					    (match-end 1) "λ")
+			    nil)))))
+
+;;;; Clever hack so anonymous function reader macro shows up as ƒ
+(font-lock-add-keywords
+ 'clojure-mode '(("\\(#\\)("
+		  (0 (progn (compose-region (match-beginning 1)
+					    (match-end 1) "ƒ")
+			    nil)))))
+
+;;;; Clever hack so set reader macro shows up as ∈
+(font-lock-add-keywords
+ 'clojure-mode '(("\\(#\\){"
+		  (0 (progn (compose-region (match-beginning 1)
+					    (match-end 1) "∈")
+			    nil)))))
 
 ;; Display line number
 (add-hook 'prog-mode-hook 'linum-mode)
@@ -192,32 +228,20 @@
 ;;;; Use light-table's command-return for evaluating in the REPL
 ;;;; TODO: Make smarter
 (define-key hy-mode-map (kbd "<s-return>") 'lisp-eval-last-sexp)
+(add-hook 'hy-mode-hook 'auto-indent-mode)                           ; auto-indent-mode 
+(add-hook 'hy-mode-hook
+	  (lambda ()
+	    (smartparens-mode 1)                                     ; better than paredit mode
+	    (autopair-mode 0)                                        ; incompatible with smartparens-mode
+	    ))
 
-;; Haskell Mode
+;; Haskell mode
 (require 'haskell-mode)
 ;;;; Use hdevtools for on the fly linting / static analysis
 (eval-after-load 'flycheck '(require 'flycheck-hdevtools))
 (add-hook 'haskell-mode-hook 'flycheck-mode)
 ;;;; Auto-indent
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-;;;; TODO: Auto-complete (requires ghc-mod?)
-;;;; HOOGLE
-(setq haskell-hoogle-command "hoogle")
-(add-hook 'haskell-mode-hook (lambda () (define-key evil-normal-state-map ",?" (lambda () (interactive) (execute-kbd-macro [?\M-x ?h ?o ?o ?g ?l ?e return return])))))
-
-;;;; Dash at point
-(require 'dash-at-point)
-(define-key evil-normal-state-map "?" 'dash-at-point)
-
-;; EShell stuff
-(add-hook
- 'eshell-mode
- (lambda ()
-   (defalias 'vi 'find-file)
-   (defalias 'less 'find-file-other-window)
-   (defalias 'more 'find-file-other-window)
-   (defalias 'openo 'find-file-other-window)
-   ))
-
-(provide 'init)
-;;; init.el ends here
+;;;; Auto-complete (requires ghc-mod?)
+(add-hook 'haskell-mode-hook 'auto-complete)
+(setq haskell-font-lock-symbols t)
