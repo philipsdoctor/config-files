@@ -139,6 +139,8 @@
 (setq-default save-place t)
 (setq save-place-file "~/.emacs.d/saved-places")
 
+;; TODO: bind enlarge-window-horizontally to-something
+
 ;; Smartparen mode
 (require 'smartparens)
 (add-hook 'prog-mode-hook 'smartparens-mode)
