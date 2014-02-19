@@ -32,7 +32,7 @@
 
 ;; Yes and No
 ;;;; Nobody likes to have to type out the full yes or no when Emacs asks. Which it does quite often. Make it one character.
-(defalias 'yes-or-no-p 'y-or-n-p)
+(fset 'yes-or-no-p 'y-or-n-p)
 
 ;; Use package system
 (require 'package)
@@ -53,7 +53,7 @@
     (mapc 'package-install uninstalled-packages)))
 
 ;; Custom Packages
-(add-to-list 'load-path "~/.emacs.d/custom-elisp/")
+(add-to-list 'load-path "~/.emacs.d/custom-elisp")
 
 ;; Configure window system
 (when window-system
@@ -244,4 +244,39 @@
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 ;;;; Auto-complete (requires ghc-mod?)
 (add-hook 'haskell-mode-hook 'auto-complete)
+;;;; Pretty lambdas for Haskell
+(defvar haskell-font-lock-symbols)
 (setq haskell-font-lock-symbols t)
+;;;; HOOGLE
+(setq haskell-hoogle-command "hoogle")
+(add-hook
+ 'haskell-mode-hook
+ (lambda ()
+   (evil-ex-define-cmd "hoogle" 'hoogle)
+   (define-key evil-normal-state-map ",?"
+     (lambda ()
+       (interactive)
+       (execute-kbd-macro [?\M-x ?h ?o ?o ?g ?l ?e return return])))))
+;;;; Use hdevtools to determine type under point
+(add-hook 'haskell-mode-hook
+	  (lambda ()
+	    (load "hdevtools")
+	    (define-key evil-normal-state-map "t" 'hdevtools/show-type-info)))
+
+;;;; Dash at point
+(require 'dash-at-point)
+(define-key evil-normal-state-map "?" 'dash-at-point)
+
+;; EShell stuff
+(add-hook
+ 'eshell-mode
+ (lambda ()
+   (defalias 'vi 'find-file)
+   (defalias 'less 'find-file-other-window)
+   (defalias 'more 'find-file-other-window)
+   (defalias 'openo 'find-file-other-window)
+   ))
+
+(provide 'init)
+;;; init.el ends here
+
