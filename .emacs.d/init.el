@@ -3,9 +3,11 @@
       initial-scratch-message nil      ; No scratch message
       )
 
-(when window-system
-  (tool-bar-mode -1)                   ; No tool-bar
-  (scroll-bar-mode -1)                 ; No scrollbar (TODO: Change me?)
+(if window-system
+    (progn 
+	(tool-bar-mode -1)                   ; No tool-bar
+	(scroll-bar-mode -1))                ; No scrollbar (TODO: Change me?)
+    (progn (menu-bar-mode -1 ))
   )
 
 ;; Utility Functions
