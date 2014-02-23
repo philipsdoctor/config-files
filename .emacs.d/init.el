@@ -215,6 +215,9 @@
 
 ;; Hy mode
 (require 'hy-mode)
+; Bug where cl-flet can't be found
+(unless (fboundp 'cl-flet)
+  (defalias 'cl-flet 'flet))
 ;;;; Use light-table's command-return for evaluating in the REPL
 ;;;; TODO: Make smarter
 (define-key hy-mode-map (kbd "<s-return>") 'lisp-eval-last-sexp)
