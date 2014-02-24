@@ -1,3 +1,9 @@
+;;; init -- Initialization settings 
+
+;;; Commentary:
+
+;;; Code:
+
 ;; Quiet Startup
 (setq inhibit-splash-screen t          ; No splash screen
       initial-scratch-message nil      ; No scratch message
@@ -40,7 +46,7 @@
 ;;;; my-packages
 (defvar my-packages)
 (setq my-packages
-      '(auto-complete autopair cider color-theme evil goto-last-change haskell-mode hy-mode main-line maxframe nrepl clojure-mode epl popup rainbow-delimiters smex undo-tree flycheck flycheck-hdevtools kibit-mode smartparens auto-indent-mode dash-at-point))
+      '(auto-complete autopair cider color-theme evil goto-last-change haskell-mode hy-mode main-line maxframe nrepl clojure-mode epl popup rainbow-delimiters smex undo-tree flycheck flycheck-hdevtools kibit-mode smartparens auto-indent-mode dash-at-point puppet-mode))
 
 ;;;; Install my-packages as necessary
 (let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x))) my-packages)))
@@ -83,6 +89,7 @@
 
 ;; Auto-indent mode
 (require 'auto-indent-mode)
+(add-hook 'prog-mode-hook 'auto-indent-mode)
 
 ;; Flycheck mode
 (require 'flycheck)
@@ -148,7 +155,6 @@
 ;;;; TODO: Make smarter
 (define-key emacs-lisp-mode-map (kbd "<s-return>") 'eval-last-sexp)  
 (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)                      ; flycheck-mode 
-(add-hook 'emacs-lisp-mode-hook 'auto-indent-mode)                   ; auto-indent-mode 
 (add-hook 'emacs-lisp-mode-hook
 	  (lambda ()
 	    (smartparens-mode 1)                                     ; better than paredit mode
@@ -221,11 +227,10 @@
 ;;;; Use light-table's command-return for evaluating in the REPL
 ;;;; TODO: Make smarter
 (define-key hy-mode-map (kbd "<s-return>") 'lisp-eval-last-sexp)
-(add-hook 'hy-mode-hook 'auto-indent-mode)                           ; auto-indent-mode 
 (add-hook 'hy-mode-hook
 	  (lambda ()
-	    (smartparens-mode 1)                                     ; better than paredit mode
-	    (autopair-mode 0)                                        ; incompatible with smartparens-mode
+	    (smartparens-mode 1)                ; better than paredit mode
+	    (autopair-mode 0)                   ; incompatible with smartparens-mode
 	    ))
 
 ;; Haskell mode
@@ -235,7 +240,14 @@
   '(require 'flycheck-hdevtools))
 (add-hook 'haskell-mode-hook 'flycheck-mode)
 ;;;; Auto-indent
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(add-hook 'haskell-mode-hook
+	  (lambda ()
+	    (auto-indent-mode 0)  ; auto-indent-mode is broken for Haskell
+	    (turn-on-haskell-indentation)
+	    ))
 ;;;; Auto-complete (requires ghc-mod?)
 (add-hook 'haskell-mode-hook 'auto-complete)
+(defvar haskell-font-lock-symbols)
 (setq haskell-font-lock-symbols t)
+(provide 'init)
+;;; init.el ends here
