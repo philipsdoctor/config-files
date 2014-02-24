@@ -43,7 +43,7 @@
 ;;;; my-packages
 (defvar my-packages)
 (setq my-packages
-      '(auto-complete autopair cider color-theme evil goto-last-change haskell-mode hy-mode main-line maxframe nrepl clojure-mode epl popup rainbow-delimiters smex undo-tree flycheck flycheck-hdevtools kibit-mode smartparens auto-indent-mode dash-at-point))
+      '(auto-complete autopair cider color-theme evil goto-last-change haskell-mode hy-mode main-line maxframe nrepl clojure-mode epl popup rainbow-delimiters smex undo-tree flycheck flycheck-hdevtools kibit-mode smartparens auto-indent-mode dash-at-point puppet-mode))
 
 ;;;; Install my-packages as necessary
 (let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x))) my-packages)))
@@ -144,9 +144,8 @@
 ;; Smartparen mode
 (require 'smartparens)
 (add-hook 'prog-mode-hook 'smartparens-mode)
-;; TODO: Does this work for you Phil? They may need to be jiggered.
-(add-hook 
- 'smartparens-mode-hook
+;; TODO: Make smarter
+(add-hook 'smartparens-mode-hook
  (lambda ()
    (define-key evil-normal-state-map ",>" 'sp-forward-slurp-sexp)
    (define-key evil-normal-state-map ",." 'sp-forward-barf-sexp)
@@ -157,12 +156,12 @@
 ;;;; Use light-table's command-return for evaluating in emacs itself
 ;;;; TODO: Make smarter
 (define-key emacs-lisp-mode-map (kbd "<s-return>") 'eval-last-sexp)  
-(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)                      ; flycheck-mode 
-(add-hook 'emacs-lisp-mode-hook 'auto-indent-mode)                   ; auto-indent-mode 
+(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)               ; flycheck-mode 
+(add-hook 'emacs-lisp-mode-hook 'auto-indent-mode)            ; auto-indent-mode 
 (add-hook 'emacs-lisp-mode-hook
 	  (lambda ()
-	    (smartparens-mode 1)                                     ; better than paredit mode
-	    (autopair-mode 0)                                        ; incompatible with smartparens-mode
+	    (smartparens-mode 1)                              ; better than paredit mode
+	    (autopair-mode 0)                                 ; incompatible with smartparens-mode
 	    ))
 ;;;; Clever hack so lambda shows up as λ
 (font-lock-add-keywords
@@ -175,7 +174,13 @@
 
 ;; Autocomplete mode
 (require 'auto-complete)
+;;;; TODO: Does this work in Haskell??
 (add-hook 'prog-mode-hook 'auto-complete-mode)
+;;;; EviL hack >> and << to just indent region when in auto-indent-mode
+(add-hook 'auto-indent-mode-hook
+          (lambda ()
+             (define-key evil-normal-state-map "<" 'indent-region)
+             (define-key evil-normal-state-map ">" 'indent-region)))
 
 ;; Clojure mode
 (require 'clojure-mode)
@@ -186,11 +191,14 @@
 (eval-after-load 'flycheck '(require 'kibit-mode))
 (add-hook 'clojure-mode-hook 'flycheck-mode)
 ;;;; Smartparens mode
-(add-hook 'clojure-mode-hook
-	  (lambda ()
-	    (smartparens-mode 1)  ; better than paredit mode
-	    (autopair-mode 0)     ; incompatible with smartparens-mode
-	    ))
+(add-hook
+ 'clojure-mode-hook
+ (lambda ()
+   (smartparens-mode 1)  ; better than paredit mode
+   (autopair-mode 0)     ; incompatible with smartparens-mode
+   ))
+(add-hook 'clojure-mode-hook 'auto-indent-mode)
+
 ;;;; Clever hack so fn shows up as λ
 (font-lock-add-keywords
  'clojure-mode '(("(\\(fn\\)[\[[:space:]]"
@@ -198,19 +206,13 @@
 					    (match-end 1) "λ")
 			    nil)))))
 
-;;;; Clever hack so anonymous function reader macro shows up as ƒ
-(font-lock-add-keywords
- 'clojure-mode '(("\\(#\\)("
-		  (0 (progn (compose-region (match-beginning 1)
-					    (match-end 1) "ƒ")
-			    nil)))))
-
-;;;; Clever hack so set reader macro shows up as ∈
-(font-lock-add-keywords
- 'clojure-mode '(("\\(#\\){"
-		  (0 (progn (compose-region (match-beginning 1)
-					    (match-end 1) "∈")
-			    nil)))))
+;;;; Make EviL play with cider correctly
+(add-hook 'clojure-mode-hook
+	  (lambda ()
+	    (evil-ex-define-cmd "ns" 'cider-repl-set-ns)
+	    (define-key evil-normal-state-map (kbd "M-.") 'cider-jump)
+	    (define-key evil-normal-state-map (kbd "M-,") 'cider-jump-back)
+	    ))
 
 ;; Display line number
 (add-hook 'prog-mode-hook 'linum-mode)
@@ -228,11 +230,11 @@
 ;;;; Use light-table's command-return for evaluating in the REPL
 ;;;; TODO: Make smarter
 (define-key hy-mode-map (kbd "<s-return>") 'lisp-eval-last-sexp)
-(add-hook 'hy-mode-hook 'auto-indent-mode)                           ; auto-indent-mode 
+(add-hook 'hy-mode-hook 'auto-indent-mode)  ; auto-indent-mode 
 (add-hook 'hy-mode-hook
 	  (lambda ()
-	    (smartparens-mode 1)                                     ; better than paredit mode
-	    (autopair-mode 0)                                        ; incompatible with smartparens-mode
+	    (smartparens-mode 1)  ; better than paredit mode
+	    (autopair-mode 0)     ; incompatible with smartparens-mode
 	    ))
 
 ;; Haskell mode
@@ -261,6 +263,7 @@
 (add-hook 'haskell-mode-hook
 	  (lambda ()
 	    (load "hdevtools")
+	    ;; TODO: overlays in this are fucked :(
 	    (define-key evil-normal-state-map "t" 'hdevtools/show-type-info)))
 
 ;;;; Dash at point
