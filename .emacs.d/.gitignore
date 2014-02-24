@@ -1,19 +1,24 @@
-CHANGELOG.md
-LICENSE.txt
-README.md
-etc/
-installer/
-lib/
-manifest.el
-packs/
-tmp/
-elpa/
-.*.swp
-saved-places
-ac-comphist.dat
-url/
-eshell/
-auto-save-list/
-ido.last
+# Directories
+/CHANGELOG.md
+/LICENSE.txt
+/README.md
+/etc/
+/installer/
+/lib/
+/packs/
+/tmp/
+/elpa/
+/url/
+/eshell/
+/auto-save-list/
+
+# Files
+/saved-places
+/ido.last
+/ac-comphist.dat
+/manifest.el
+
+# Backups
 *~
+.*.swp
 *.orig

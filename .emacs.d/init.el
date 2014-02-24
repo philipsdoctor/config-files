@@ -1,17 +1,20 @@
-;;; init -- Emacs Initialization Settings
+;;; init -- Initialization settings 
 
 ;;; Commentary:
 
 ;;; Code:
+
 ;; Quiet Startup
 (setq inhibit-splash-screen t          ; No splash screen
       initial-scratch-message nil      ; No scratch message
       )
 
-(when window-system
-  (tool-bar-mode -1)                      ; No tool-bar
-  (scroll-bar-mode -1)                    ; No scrollbar
-)
+(if window-system
+    (progn 
+	(tool-bar-mode -1)                   ; No tool-bar
+	(scroll-bar-mode -1))                ; No scrollbar (TODO: Change me?)
+    (progn (menu-bar-mode -1 ))
+  )
 
 ;; Utility Functions
 (defun filter (pred lst)
@@ -89,6 +92,7 @@
 
 ;; Auto-indent mode
 (require 'auto-indent-mode)
+(add-hook 'prog-mode-hook 'auto-indent-mode)
 
 ;; Flycheck mode
 (require 'flycheck)
@@ -156,8 +160,7 @@
 ;;;; Use light-table's command-return for evaluating in emacs itself
 ;;;; TODO: Make smarter
 (define-key emacs-lisp-mode-map (kbd "<s-return>") 'eval-last-sexp)  
-(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)               ; flycheck-mode 
-(add-hook 'emacs-lisp-mode-hook 'auto-indent-mode)            ; auto-indent-mode 
+(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)                      ; flycheck-mode 
 (add-hook 'emacs-lisp-mode-hook
 	  (lambda ()
 	    (smartparens-mode 1)                              ; better than paredit mode
@@ -227,14 +230,16 @@
 
 ;; Hy mode
 (require 'hy-mode)
+; Bug where cl-flet can't be found
+(unless (fboundp 'cl-flet)
+  (defalias 'cl-flet 'flet))
 ;;;; Use light-table's command-return for evaluating in the REPL
 ;;;; TODO: Make smarter
 (define-key hy-mode-map (kbd "<s-return>") 'lisp-eval-last-sexp)
-(add-hook 'hy-mode-hook 'auto-indent-mode)  ; auto-indent-mode 
 (add-hook 'hy-mode-hook
 	  (lambda ()
-	    (smartparens-mode 1)  ; better than paredit mode
-	    (autopair-mode 0)     ; incompatible with smartparens-mode
+	    (smartparens-mode 1)                ; better than paredit mode
+	    (autopair-mode 0)                   ; incompatible with smartparens-mode
 	    ))
 
 ;; Haskell mode
@@ -243,7 +248,11 @@
 (eval-after-load 'flycheck '(require 'flycheck-hdevtools))
 (add-hook 'haskell-mode-hook 'flycheck-mode)
 ;;;; Auto-indent
-(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(add-hook 'haskell-mode-hook
+	  (lambda ()
+	    (auto-indent-mode 0)  ; auto-indent-mode is broken for Haskell
+	    (turn-on-haskell-indentation)
+	    ))
 ;;;; Auto-complete (requires ghc-mod?)
 (add-hook 'haskell-mode-hook 'auto-complete)
 ;;;; Pretty lambdas for Haskell
