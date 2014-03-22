@@ -46,14 +46,14 @@
 ;;;; my-packages
 (defvar my-packages)
 (setq my-packages
-      '(auto-complete autopair cider color-theme evil goto-last-change haskell-mode hy-mode main-line maxframe nrepl clojure-mode epl popup rainbow-delimiters smex undo-tree flycheck flycheck-hdevtools kibit-mode smartparens auto-indent-mode dash-at-point puppet-mode))
+      '(auto-complete autopair clojure-mode nrepl cider color-theme evil goto-last-change haskell-mode hy-mode main-line maxframe epl popup rainbow-delimiters smex undo-tree flycheck flycheck-hdevtools kibit-mode smartparens auto-indent-mode dash-at-point puppet-mode))
 
 ;;;; Install my-packages as necessary
 (let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x))) my-packages)))
   (when (and (not (equal uninstalled-packages '()))
 	     (y-or-n-p (format "Install packages %s?"  uninstalled-packages)))
     (package-refresh-contents)
-    (mapc 'package-install uninstalled-packages)))
+    (mapc (lambda (x) (when (not (package-installed-p x)) (package-install x))) uninstalled-packages)))
 
 ;; Custom Packages
 (add-to-list 'load-path "~/.emacs.d/custom-elisp")
@@ -70,7 +70,7 @@
   (set-frame-parameter (selected-frame) 'alpha '(95 95))
   (add-to-list 'default-frame-alist '(alpha 95 95))
   ;; Use Anonymous Pro font
-  (custom-set-faces '(default ((t (:height 180 :family "Anonymous Pro Minus")))))
+  (custom-set-faces '(default ((t (:height 180 :family "Anonymous Pro")))))
   ;; Maximize frame by default
   (maximize-frame)
   ;; Manipulate font size with usual bindings
