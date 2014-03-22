@@ -1,12 +1,19 @@
+# VIM Installation
+
+You'll need NeoBundle:
+
+	mkdir -p ~/.vim/bundle
+	git clone https://github.com/Shougo/neobundle.vim ~/.vim/bundle/neobundle.vim
+
 # Haskell Installation
 
 Assuming you have Cabal, you are going to need to download a bunch of things:
 
-  cabal install ghc-mod hoogle hdevtools hlint
+	cabal update && cabal install ghc-mod hoogle hdevtools hlint
 
 If you want to use hoogle, you'll want to create its cache:
 
-  hoogle data
+	hoogle data
 
 # Using VIM + Haskell
 
