@@ -219,6 +219,17 @@ are not started from a shell."
 					(backward-char)))
      (t (cider-eval-last-sexp)))))
 
+(define-key clojure-mode-map
+  (kbd "<s-S-return>")
+  (lambda () (interactive)
+    (cond
+     (mark-active (cider-insert-in-repl (buffer-substring-no-properties (region-beginning) (region-end)) t))
+     ((equal evil-state 'normal) (progn (forward-char)
+					(cider-insert-last-sexp-in-repl t)
+					(backward-char)))
+     (t (cider-insert-last-sexp-in-repl t)))))
+
+
 ;;;; Use kibit for on the fly static analysis
 (eval-after-load 'flycheck '(require 'kibit-mode))
 (add-hook 'clojure-mode-hook 'flycheck-mode)
@@ -249,8 +260,17 @@ are not started from a shell."
 (unless (fboundp 'cl-flet)
   (defalias 'cl-flet 'flet))
 ;;;; Use light-table's command-return for evaluating in the REPL
-;;;; TODO: Make smarter
-(define-key hy-mode-map (kbd "<s-return>") 'lisp-eval-last-sexp)
+(define-key hy-mode-map
+  (kbd "<s-return>")
+  (lambda () (interactive)
+(cond
+     (mark-active (lisp-eval-region (region-beginning) (region-end)))
+     ((equal evil-state 'normal) (progn (forward-char)
+					(lisp-eval-last-sexp)
+					(backward-char)))
+     (t (lisp-eval-last-sexp)))
+    ))
+;(define-key hy-mode-map (kbd "<s-return>") 'lisp-eval-last-sexp)
 (add-hook 'hy-mode-hook 'smarparens-mode)
 (add-hook 'hy-mode-hook (lambda () (evil-local-mode 1)))
 
