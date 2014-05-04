@@ -1,4 +1,4 @@
-;;; init -- Initialization settings 
+;;; init -- Initialization settings
 
 ;;; Commentary:
 
@@ -10,7 +10,7 @@
       )
 
 (if window-system
-    (progn 
+    (progn
 	(tool-bar-mode -1)                   ; No tool-bar
 	(scroll-bar-mode -1))                ; No scrollbar (TODO: Change me?)
     (progn (menu-bar-mode -1 ))
@@ -18,19 +18,21 @@
 
 ;; Utility Functions
 (defun filter (pred lst)
-  "Filter a list LST of elements with a given predicate PRED"
+  "Use predicate PRED to filter the list LST."
   (delq nil (mapcar (lambda (x) (and (funcall pred x) x)) lst)))
 
 (defun set-exec-path-from-shell-PATH ()
-  "Set up Emacs' `exec-path' and PATH environment variable to match that used by the user's shell.
-     This is particularly useful under Mac OSX, where GUI apps are not started from a shell."
+  "Set up Emacs' `exec-path' and PATH environment variable.
+PATH will match the the user's shell.
+This is particularly useful under Mac OS X, where GUI apps
+are not started from a shell."
   (interactive)
   (let ((path-from-shell (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
     (setenv "PATH" path-from-shell)
     (setq exec-path (split-string path-from-shell path-separator))))
 
 (defun add-multiple-hooks (hooks function)
-  "Adds a function to multiple hooks"
+  "Triggers, for each hook in HOOKS, the specified FUNCTION."
   (mapc (lambda (hook) (add-hook hook function)) hooks))
 
 ;; Yes and No
@@ -51,7 +53,7 @@
 ;;;; Install my-packages as necessary
 (let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x))) my-packages)))
   (when (and (not (equal uninstalled-packages '()))
-	     (y-or-n-p (format "Install packages %s?"  uninstalled-packages)))
+	     (y-or-n-p (format "Install packages %s?" uninstalled-packages)))
     (package-refresh-contents)
     (mapc (lambda (x) (when (not (package-installed-p x)) (package-install x))) uninstalled-packages)))
 
@@ -77,12 +79,11 @@
   ;;;; To return to default font size, <C-x C-0>
   (global-set-key (kbd "s-=") 'text-scale-increase)
   (global-set-key (kbd "s--") 'text-scale-decrease)
-  (set-exec-path-from-shell-PATH)
-  )
+  (set-exec-path-from-shell-PATH))
 
 ;; Switch to other buffer
 (defun switch-to-previous-buffer ()
-  "Toggle between this and previous buffer"
+  "Toggle between this and previous buffer."
   (interactive)
   (switch-to-buffer (other-buffer)))
 (global-set-key (kbd "C-\\") 'switch-to-previous-buffer)
@@ -97,10 +98,8 @@
 ;; Flycheck mode
 (require 'flycheck)
 
-;; evil-mode
+;; EVIL-mode
 (require 'evil)
-;;;; Turn on/off evil-mode here
-(add-multiple-hooks '(haskell-mode-hook clojure-mode-hook hy-mode-hook emacs-lisp-mode-hook) 'evil-mode)
 (setq evil-default-cursor t)
 ;;;; Custom behavior to keep EviL from zealously killing emacs when in window-system
 (when window-system
@@ -113,9 +112,19 @@
   (define-key evil-normal-state-map "ZQ" 'evil-delete-buffer)
   (evil-ex-define-cmd "q[uit]" 'evil-delete-buffer)
   (evil-ex-define-cmd "wq" 'save-and-kill-buffer))
+;;;; Hack >> and << to just indent region when in auto-indent-mode
+(add-hook 'auto-indent-mode-hook
+          (lambda ()
+	    (define-key evil-normal-state-map "<" 'indent-region)
+             (define-key evil-normal-state-map ">" 'indent-region)))
 
-(require 'dash-at-point)
-(add-hook 'prog-mode-hook (lambda () (define-key evil-normal-state-map "?" 'dash-at-point)))
+;; Dash documentation
+(when window-system
+      (require 'dash-at-point)
+      ;;;; EVIL key bindings
+      (add-hook 'prog-mode-hook
+		(lambda ()
+		  (define-key evil-normal-state-map "?" 'dash-at-point))))
 
 ;; Rainbow delimiters
 (require 'rainbow-delimiters)
@@ -148,24 +157,29 @@
 ;; Smartparen mode
 (require 'smartparens)
 (add-hook 'prog-mode-hook 'smartparens-mode)
-;; TODO: Make smarter
+;;;; EVIL key bindings
+;;;; TODO: Make smarter
 (add-hook 'smartparens-mode-hook
  (lambda ()
    (define-key evil-normal-state-map ",>" 'sp-forward-slurp-sexp)
    (define-key evil-normal-state-map ",." 'sp-forward-barf-sexp)
    (define-key evil-normal-state-map ",," 'sp-backward-slurp-sexp)
    (define-key evil-normal-state-map ",<" 'sp-backward-barf-sexp)))
+;;;; Auto-pair mode is incompatible with smart-parens mode
+(add-hook 'smartparens-mode-hook (lambda () (autopair-mode 0)))
+
 
 ;; Emacs Lisp mode
 ;;;; Use light-table's command-return for evaluating in emacs itself
-;;;; TODO: Make smarter
-(define-key emacs-lisp-mode-map (kbd "<s-return>") 'eval-last-sexp)  
-(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)                      ; flycheck-mode 
-(add-hook 'emacs-lisp-mode-hook
-	  (lambda ()
-	    (smartparens-mode 1)                              ; better than paredit mode
-	    (autopair-mode 0)                                 ; incompatible with smartparens-mode
-	    ))
+(define-key emacs-lisp-mode-map
+  (kbd "<s-return>")
+  (lambda () (interactive)
+    (if mark-active
+	(eval-region (region-beginning) (region-end) t)
+        (eval-last-sexp nil))))
+(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
+(add-hook 'emacs-lisp-mode-hook (lambda () (evil-local-mode 1)))
+(add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
 ;;;; Clever hack so lambda shows up as λ
 (font-lock-add-keywords
  'emacs-lisp-mode
@@ -177,31 +191,39 @@
 
 ;; Autocomplete mode
 (require 'auto-complete)
-;;;; TODO: Does this work in Haskell??
 (add-hook 'prog-mode-hook 'auto-complete-mode)
-;;;; EviL hack >> and << to just indent region when in auto-indent-mode
-(add-hook 'auto-indent-mode-hook
-          (lambda ()
-             (define-key evil-normal-state-map "<" 'indent-region)
-             (define-key evil-normal-state-map ">" 'indent-region)))
 
 ;; Clojure mode
 (require 'clojure-mode)
+;;;; EVIL mode
+(add-hook 'clojure-mode-hook (lambda () (evil-local-mode 1)))
+;;;; Make EVIL play with cider correctly
+(add-hook 'clojure-mode-hook
+	  (lambda ()
+	    ;; Type :ns to change namespaces in cider repl
+	    (evil-ex-define-cmd "ns" 'cider-repl-set-ns)
+	    ;; Use M-. to jump to definition
+	    (define-key evil-normal-state-map (kbd "M-.") 'cider-jump)
+	    ;; Use M-, to jump back after jumping to definition
+	    (define-key evil-normal-state-map (kbd "M-,") 'cider-jump-back)))
+
 ;;;; Use light-table's command-return for evaluating in the REPL
-;;;; TODO: Make smarter
-(define-key clojure-mode-map (kbd "<s-return>") 'cider-eval-last-expression)
+;;;; TODO: command-shift-return
+(define-key clojure-mode-map
+  (kbd "<s-return>")
+  (lambda () (interactive)
+    (cond
+     (mark-active (cider-eval-region (region-beginning) (region-end)))
+     ((equal evil-state 'normal) (progn (forward-char)
+					(cider-eval-last-sexp)
+					(backward-char)))
+     (t (cider-eval-last-sexp)))))
+
 ;;;; Use kibit for on the fly static analysis
 (eval-after-load 'flycheck '(require 'kibit-mode))
 (add-hook 'clojure-mode-hook 'flycheck-mode)
-;;;; Smartparens mode
-(add-hook
- 'clojure-mode-hook
- (lambda ()
-   (smartparens-mode 1)  ; better than paredit mode
-   (autopair-mode 0)     ; incompatible with smartparens-mode
-   ))
+(add-hook 'clojure-mode-hook 'smartparens-mode)
 (add-hook 'clojure-mode-hook 'auto-indent-mode)
-
 ;;;; Clever hack so fn shows up as λ
 (font-lock-add-keywords
  'clojure-mode '(("(\\(fn\\)[\[[:space:]]"
@@ -209,13 +231,6 @@
 					    (match-end 1) "λ")
 			    nil)))))
 
-;;;; Make EviL play with cider correctly
-(add-hook 'clojure-mode-hook
-	  (lambda ()
-	    (evil-ex-define-cmd "ns" 'cider-repl-set-ns)
-	    (define-key evil-normal-state-map (kbd "M-.") 'cider-jump)
-	    (define-key evil-normal-state-map (kbd "M-,") 'cider-jump-back)
-	    ))
 
 ;; Display line number
 (add-hook 'prog-mode-hook 'linum-mode)
@@ -236,17 +251,15 @@
 ;;;; Use light-table's command-return for evaluating in the REPL
 ;;;; TODO: Make smarter
 (define-key hy-mode-map (kbd "<s-return>") 'lisp-eval-last-sexp)
-(add-hook 'hy-mode-hook
-	  (lambda ()
-	    (smartparens-mode 1)                ; better than paredit mode
-	    (autopair-mode 0)                   ; incompatible with smartparens-mode
-	    ))
+(add-hook 'hy-mode-hook 'smarparens-mode)
+(add-hook 'hy-mode-hook (lambda () (evil-local-mode 1)))
 
 ;; Haskell mode
 (require 'haskell-mode)
 ;;;; Use hdevtools for on the fly linting / static analysis
 (eval-after-load 'flycheck '(require 'flycheck-hdevtools))
 (add-hook 'haskell-mode-hook 'flycheck-mode)
+(add-hook 'haskell-mode-hook (lambda () (evil-local-mode 1)))
 ;;;; Auto-indent
 (add-hook 'haskell-mode-hook
 	  (lambda ()
@@ -268,16 +281,6 @@
      (lambda ()
        (interactive)
        (execute-kbd-macro [?\M-x ?h ?o ?o ?g ?l ?e return return])))))
-;;;; Use hdevtools to determine type under point
-(add-hook 'haskell-mode-hook
-	  (lambda ()
-	    (load "hdevtools")
-	    ;; TODO: overlays in this are fucked :(
-	    (define-key evil-normal-state-map "t" 'hdevtools/show-type-info)))
-
-;;;; Dash at point
-(require 'dash-at-point)
-(define-key evil-normal-state-map "?" 'dash-at-point)
 
 ;; EShell stuff
 (add-hook
