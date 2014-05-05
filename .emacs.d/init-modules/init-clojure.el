@@ -48,10 +48,6 @@
 (eval-after-load 'flycheck '(require 'kibit-mode))
 (add-hook 'clojure-mode-hook 'flycheck-mode)
 
-;;;; Use smart parens (as opposed to paraedit)
-(require-package 'smartparens)
-(add-hook 'clojure-mode-hook 'smartparens-mode)
-
 ;;;; Clever hack so fn shows up as λ
 (font-lock-add-keywords
  'clojure-mode '(("(\\(fn\\)[\[[:space:]]"

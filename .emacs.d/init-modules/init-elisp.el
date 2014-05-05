@@ -5,7 +5,7 @@
 ;;; Code:
 
 (require 'init-packages)
-(require-package 'flycheck 'evil 'smartparens)
+(require-package 'flycheck 'evil)
 
 ;;;; Use light-table's command-return for evaluating in emacs itself
 (define-key emacs-lisp-mode-map
@@ -16,7 +16,6 @@
         (eval-last-sexp nil))))
 (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
 (evil-set-initial-state 'emacs-lisp-mode 'normal)
-(add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
 ;;;; Clever hack so lambda shows up as λ
 (font-lock-add-keywords
  'emacs-lisp-mode
