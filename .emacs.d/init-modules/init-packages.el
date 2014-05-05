@@ -11,8 +11,9 @@
 
 ;; TODO: Use a closure here
 (defvar *packages-refreshed* nil
-  "States whether we have refreshed the packages or not")
+  "States whether we have refreshed the packages or not.")
 (defun package-refresh-contents-if-necessary ()
+  "Run PACKAGE-REFRESH-CONTENTS if it hasn't been run already."
     (when (not *packages-refreshed*)
       (package-refresh-contents)
       (setq *packages-refreshed* t)))
@@ -25,7 +26,7 @@
 			(package-install ,p))) packages)
      ,@(mapcar (lambda (p) `(require ,p)) packages)))
 
-(require-package 'auto-complete 'clojure-mode 'cider 'evil 'goto-last-change 'haskell-mode 'hy-mode 'main-line 'popup 'rainbow-delimiters 'smex 'undo-tree 'flycheck 'flycheck-hdevtools 'kibit-mode 'smartparens 'auto-indent-mode 'dash-at-point 'puppet-mode)
+(require-package 'auto-complete 'clojure-mode 'cider 'goto-last-change 'haskell-mode 'hy-mode 'main-line 'popup 'rainbow-delimiters 'smex 'undo-tree 'flycheck 'flycheck-hdevtools 'kibit-mode 'smartparens 'auto-indent-mode 'dash-at-point 'puppet-mode)
 
 (provide 'init-packages)
 ;;; init-packages.el ends here
