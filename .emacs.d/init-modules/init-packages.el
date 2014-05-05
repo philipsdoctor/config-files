@@ -26,7 +26,7 @@
 			(package-install ,p))) packages)
      ,@(mapcar (lambda (p) `(require ,p)) packages)))
 
-(require-package 'auto-complete 'clojure-mode 'cider 'goto-last-change 'haskell-mode 'hy-mode 'popup 'rainbow-delimiters 'smex 'undo-tree 'flycheck 'flycheck-hdevtools 'kibit-mode 'smartparens 'auto-indent-mode 'dash-at-point 'puppet-mode)
+(require-package 'auto-complete 'clojure-mode 'cider 'goto-last-change 'haskell-mode 'hy-mode 'popup 'rainbow-delimiters 'smex 'undo-tree 'flycheck 'flycheck-hdevtools 'kibit-mode 'auto-indent-mode 'dash-at-point 'puppet-mode)
 
 (provide 'init-packages)
 ;;; init-packages.el ends here
