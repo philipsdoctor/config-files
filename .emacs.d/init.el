@@ -31,7 +31,6 @@
 (require 'auto-complete)
 (add-hook 'prog-mode-hook 'auto-complete-mode)
 
-
 ;; Display line number
 (add-hook 'prog-mode-hook 'linum-mode)
 
@@ -42,27 +41,6 @@
 (defvar ido-use-virtual-buffers)
 (setq ido-enable-flex-matching t
       ido-use-virtual-buffers t)
-
-;; Hy mode
-(require 'hy-mode)
-; Bug where cl-flet can't be found
-(unless (fboundp 'cl-flet)
-  (defalias 'cl-flet 'flet))
-;;;; Use light-table's command-return for evaluating in the REPL
-(define-key hy-mode-map
-  (kbd "<s-return>")
-  (lambda () (interactive)
-(cond
-     (mark-active (lisp-eval-region (region-beginning) (region-end)))
-     ((equal evil-state 'normal) (progn (forward-char)
-					(lisp-eval-last-sexp)
-					(backward-char)))
-     (t (lisp-eval-last-sexp)))
-    ))
-;(define-key hy-mode-map (kbd "<s-return>") 'lisp-eval-last-sexp)
-(add-hook 'hy-mode-hook 'smarparens-mode)
-(add-hook 'hy-mode-hook (lambda () (evil-local-mode 1)))
-
 ;; Haskell mode
 (require 'haskell-mode)
 ;;;; Use hdevtools for on the fly linting / static analysis
