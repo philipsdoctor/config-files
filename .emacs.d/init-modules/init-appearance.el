@@ -5,14 +5,13 @@
 ;;; Code:
 
 (require 'init-packages)
-(require-package 'main-line)
+;(require-package 'main-line)
 
 (when window-system
   (tool-bar-mode -1)        ; No tool-bar
   (scroll-bar-mode -1)      ; No scrollbar (TODO: Change me?)
 
   ;; Theming for window mode only
-  (require 'init-packages)
   (require-package 'color-theme)
   (load-theme 'wombat t)    ; Use Wombat Theme
 

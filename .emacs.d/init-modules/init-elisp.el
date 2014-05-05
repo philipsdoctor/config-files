@@ -6,6 +6,7 @@
 
 (require 'init-packages)
 (require-package 'flycheck 'evil)
+(evil-set-initial-state 'emacs-lisp-mode 'normal)
 
 ;;;; Use light-table's command-return for evaluating in emacs itself
 (define-key emacs-lisp-mode-map
@@ -14,8 +15,9 @@
     (if mark-active
 	(eval-region (region-beginning) (region-end) t)
         (eval-last-sexp nil))))
+
 (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
-(evil-set-initial-state 'emacs-lisp-mode 'normal)
+
 ;;;; Clever hack so lambda shows up as λ
 (font-lock-add-keywords
  'emacs-lisp-mode

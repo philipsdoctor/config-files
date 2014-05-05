@@ -8,11 +8,14 @@
 (require-package 'evil)
 
 ;; Enable evil-mode globally
-(evil-mode)
-(setq evil-default-state 'emacs)   ; Make default state be emacs
-(setq evil-default-cursor t)       ; Use fat cursor by default
+(evil-mode 1)
+(setq evil-default-state 'emacs            ; Make default state be emacs
+      evil-default-cursor t                ; Use fat cursor by default
+      )
 
-;;;; Custom behavior to keep EviL from zealously killing emacs when in window-system
+;; TODO: Make prog-mode start in normal mode
+
+;;;; Custom behavior to keep evil from zealously killing emacs when in window-system
 (when window-system
   (defun save-and-kill-buffer ()
     (interactive)

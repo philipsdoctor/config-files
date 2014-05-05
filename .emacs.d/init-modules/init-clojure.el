@@ -6,20 +6,20 @@
 
 ;; Clojure mode
 (require 'init-packages)
-(require-package 'clojure-mode)
+(require-package 'clojure-mode 'flycheck 'evil 'cider) 
 
 ;;;; EVIL mode
 (require-package 'evil 'cider)
 (evil-set-initial-state 'clojure-mode 'normal)
-;;;; Make EVIL play with cider correctly
+;;;; Make EVIL play with cider
+(evil-define-key 'normal clojure-mode-map (kbd "M-.") 'cider-jump)
+(evil-define-key 'normal clojure-mode-map (kbd "M-,") 'cider-jump-back)
 (add-hook 'clojure-mode-hook
 	  (lambda ()
 	    ;; Type :ns to change namespaces in cider repl
 	    (evil-ex-define-cmd "ns" 'cider-repl-set-ns)
-	    ;; Use M-. to jump to definition
-	    (define-key evil-normal-state-map (kbd "M-.") 'cider-jump)
-	    ;; Use M-, to jump back after jumping to definition
-	    (define-key evil-normal-state-map (kbd "M-,") 'cider-jump-back)))
+	   ))
+
 
 ;;;; Use light-table's command-return for evaluating in the REPL
 (define-key clojure-mode-map
@@ -44,11 +44,11 @@
 
 
 ;;;; Use kibit for on the fly static analysis
-(require-package 'flycheck 'kibit-mode)
-(eval-after-load 'flycheck '(require 'kibit-mode))
+;; TODO: Broken, but presumably will work again?
+;(eval-after-load 'flycheck '(require-package 'kibit-mode))
 (add-hook 'clojure-mode-hook 'flycheck-mode)
 
-;;;; Clever hack so fn shows up as Î»
+;;;; Clever hack so fn shows up as »
 (font-lock-add-keywords
  'clojure-mode '(("(\\(fn\\)[\[[:space:]]"
 		  (0 (progn (compose-region (match-beginning 1)

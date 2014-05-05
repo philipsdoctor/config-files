@@ -26,7 +26,7 @@
 			(package-install ,p))) packages)
      ,@(mapcar (lambda (p) `(require ,p)) packages)))
 
-(require-package 'auto-complete 'haskell-mode 'hy-mode 'popup 'smex 'undo-tree 'flycheck-hdevtools 'puppet-mode)
+(require-package 'auto-complete 'popup 'smex 'undo-tree 'puppet-mode)
 
 (provide 'init-packages)
 ;;; init-packages.el ends here
