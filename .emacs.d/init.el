@@ -20,19 +20,6 @@
 (add-to-list 'load-path init-modules-dir)
 (mapc 'load (directory-files init-modules-dir nil "^[^#].*el$"))
 
-;; Auto-indent mode
-(require-package 'auto-indent-mode 'evil)
-(add-hook 'prog-mode-hook 'auto-indent-mode)
-;;;; Hack >> and << to just indent region when in auto-indent-mode and evil-normal-state
-(add-hook 'auto-indent-mode-hook
-          (lambda ()
-	    (define-key evil-normal-state-map "<" 'indent-region)
-             (define-key evil-normal-state-map ">" 'indent-region)))
-
-;; Flycheck mode
-(require 'flycheck)
-
-
 ;; Remember our place
 (require 'saveplace)
 (setq-default save-place t)
@@ -40,79 +27,9 @@
 
 ;; TODO: bind enlarge-window-horizontally to-something
 
-
-;; Emacs Lisp mode
-;;;; Use light-table's command-return for evaluating in emacs itself
-(define-key emacs-lisp-mode-map
-  (kbd "<s-return>")
-  (lambda () (interactive)
-    (if mark-active
-	(eval-region (region-beginning) (region-end) t)
-        (eval-last-sexp nil))))
-(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
-(evil-set-initial-state 'emacs-lisp-mode 'normal)
-(add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
-;;;; Clever hack so lambda shows up as λ
-(font-lock-add-keywords
- 'emacs-lisp-mode
- '(("(\\(lambda\\)\\>"
-    (0 (prog1 ()
-	 (compose-region (match-beginning 1)
-			 (match-end 1)
-			 ?λ))))))
-
 ;; Autocomplete mode
 (require 'auto-complete)
 (add-hook 'prog-mode-hook 'auto-complete-mode)
-
-;; Clojure mode
-(require 'clojure-mode)
-;;;; EVIL mode
-(add-hook 'clojure-mode-hook (lambda () (evil-local-mode 1)))
-;;;; Make EVIL play with cider correctly
-(add-hook 'clojure-mode-hook
-	  (lambda ()
-	    ;; Type :ns to change namespaces in cider repl
-	    (evil-ex-define-cmd "ns" 'cider-repl-set-ns)
-	    ;; Use M-. to jump to definition
-	    (define-key evil-normal-state-map (kbd "M-.") 'cider-jump)
-	    ;; Use M-, to jump back after jumping to definition
-	    (define-key evil-normal-state-map (kbd "M-,") 'cider-jump-back)))
-
-;;;; Use light-table's command-return for evaluating in the REPL
-;;;; TODO: command-shift-return
-(define-key clojure-mode-map
-  (kbd "<s-return>")
-  (lambda () (interactive)
-    (cond
-     (mark-active (cider-eval-region (region-beginning) (region-end)))
-     ((equal evil-state 'normal) (progn (forward-char)
-					(cider-eval-last-sexp)
-					(backward-char)))
-     (t (cider-eval-last-sexp)))))
-
-(define-key clojure-mode-map
-  (kbd "<s-S-return>")
-  (lambda () (interactive)
-    (cond
-     (mark-active (cider-insert-in-repl (buffer-substring-no-properties (region-beginning) (region-end)) t))
-     ((equal evil-state 'normal) (progn (forward-char)
-					(cider-insert-last-sexp-in-repl t)
-					(backward-char)))
-     (t (cider-insert-last-sexp-in-repl t)))))
-
-
-;;;; Use kibit for on the fly static analysis
-(eval-after-load 'flycheck '(require 'kibit-mode))
-(add-hook 'clojure-mode-hook 'flycheck-mode)
-(add-hook 'clojure-mode-hook 'smartparens-mode)
-(add-hook 'clojure-mode-hook 'auto-indent-mode)
-;;;; Clever hack so fn shows up as λ
-(font-lock-add-keywords
- 'clojure-mode '(("(\\(fn\\)[\[[:space:]]"
-		  (0 (progn (compose-region (match-beginning 1)
-					    (match-end 1) "λ")
-			    nil)))))
 
 
 ;; Display line number
