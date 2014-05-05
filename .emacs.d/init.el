@@ -23,16 +23,15 @@
 ;; Auto-indent mode
 (require-package 'auto-indent-mode 'evil)
 (add-hook 'prog-mode-hook 'auto-indent-mode)
-
-;; Flycheck mode
-(require 'flycheck)
-
-
-;;;; Hack >> and << to just indent region when in auto-indent-mode
+;;;; Hack >> and << to just indent region when in auto-indent-mode and evil-normal-state
 (add-hook 'auto-indent-mode-hook
           (lambda ()
 	    (define-key evil-normal-state-map "<" 'indent-region)
              (define-key evil-normal-state-map ">" 'indent-region)))
+
+;; Flycheck mode
+(require 'flycheck)
+
 
 ;; Dash documentation
 (when window-system
