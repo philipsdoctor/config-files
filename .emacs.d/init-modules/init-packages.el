@@ -9,11 +9,13 @@
 (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (package-initialize)
 
-(let ((*packages-refreshed* nil))
-  (defun package-refresh-contents-if-necessary ()
+;; TODO: Use a closure here
+(defvar *packages-refreshed* nil
+  "States whether we have refreshed the packages or not")
+(defun package-refresh-contents-if-necessary ()
     (when (not *packages-refreshed*)
       (package-refresh-contents)
-      (setq *packages-refreshed* t))))
+      (setq *packages-refreshed* t)))
 
 (defmacro require-package (&rest packages)
   "Install given PACKAGES, running PACKAGE-REFRESH-CONTENTS if necessary."

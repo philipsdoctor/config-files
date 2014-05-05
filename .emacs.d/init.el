@@ -3,7 +3,7 @@
 ;;; Commentary:
 
 ;;; Contains a minimal bootstrap;
-;;; other settings should be in modules/ directory
+;;; other settings should be in init-modules/ directory
 
 ;;; Code:
 
@@ -12,11 +12,6 @@
       initial-scratch-message nil  ; No scratch message
       )
 
-;; Yes and No
-;;;; Nobody likes to have to type out the full yes or no when Emacs asks. Which it does quite often. Make it one character.
-(fset 'yes-or-no-p 'y-or-n-p)
-
-
 ;; Custom Initialization Modules
 (defvar init-base-dir (file-name-directory (or load-file-name (buffer-file-name)))
   "The basename directory where this init file is located.")
@@ -24,17 +19,6 @@
   "The modules directory where user level initialization modules are located; to avoid name-space conflicts all modules should be prefixed with 'init'.")
 (add-to-list 'load-path init-modules-dir)
 (mapc 'load (directory-files init-modules-dir nil "^[^#].*el$"))
-
-
-;; Switch to other buffer
-(defun switch-to-previous-buffer ()
-  "Toggle between this and previous buffer."
-  (interactive)
-  (switch-to-buffer (other-buffer)))
-(global-set-key (kbd "C-\\") 'switch-to-previous-buffer)
-
-;; C-tab Goes to other window
-(global-set-key [C-tab] 'other-window)
 
 ;; Auto-indent mode
 (require 'auto-indent-mode)
@@ -45,6 +29,7 @@
 
 ;; EVIL-mode
 (require 'evil)
+(evil-mode)
 (setq evil-default-cursor t)
 ;;;; Custom behavior to keep EviL from zealously killing emacs when in window-system
 (when window-system
@@ -57,6 +42,7 @@
   (define-key evil-normal-state-map "ZQ" 'evil-delete-buffer)
   (evil-ex-define-cmd "q[uit]" 'evil-delete-buffer)
   (evil-ex-define-cmd "wq" 'save-and-kill-buffer))
+
 ;;;; Hack >> and << to just indent region when in auto-indent-mode
 (add-hook 'auto-indent-mode-hook
           (lambda ()
@@ -110,8 +96,6 @@
    (define-key evil-normal-state-map ",." 'sp-forward-barf-sexp)
    (define-key evil-normal-state-map ",," 'sp-backward-slurp-sexp)
    (define-key evil-normal-state-map ",<" 'sp-backward-barf-sexp)))
-;;;; Auto-pair mode is incompatible with smart-parens mode
-(add-hook 'smartparens-mode-hook (lambda () (autopair-mode 0)))
 
 
 ;; Emacs Lisp mode
@@ -123,7 +107,6 @@
 	(eval-region (region-beginning) (region-end) t)
         (eval-last-sexp nil))))
 (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
-(add-hook 'emacs-lisp-mode-hook (lambda () (evil-local-mode 1)))
 (add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
 ;;;; Clever hack so lambda shows up as λ
 (font-lock-add-keywords
