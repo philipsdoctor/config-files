@@ -2,84 +2,37 @@
 
 ;;; Commentary:
 
+;;; Contains a minimal bootstrap;
+;;; other settings should be in modules/ directory
+
 ;;; Code:
 
 ;; Quiet Startup
-(setq inhibit-splash-screen t          ; No splash screen
-      initial-scratch-message nil      ; No scratch message
+(setq inhibit-splash-screen t      ; No splash screen
+      initial-scratch-message nil  ; No scratch message
       )
 
 (if window-system
     (progn
-	(tool-bar-mode -1)                   ; No tool-bar
-	(scroll-bar-mode -1))                ; No scrollbar (TODO: Change me?)
-    (progn (menu-bar-mode -1 ))
+	(tool-bar-mode -1)         ; No tool-bar
+	(scroll-bar-mode -1))      ; No scrollbar (TODO: Change me?)
+    (progn (menu-bar-mode -1 ))    ; No menubar
   )
 
-;; Utility Functions
-(defun filter (pred lst)
-  "Use predicate PRED to filter the list LST."
-  (delq nil (mapcar (lambda (x) (and (funcall pred x) x)) lst)))
-
-(defun set-exec-path-from-shell-PATH ()
-  "Set up Emacs' `exec-path' and PATH environment variable.
-PATH will match the the user's shell.
-This is particularly useful under Mac OS X, where GUI apps
-are not started from a shell."
-  (interactive)
-  (let ((path-from-shell (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
-    (setenv "PATH" path-from-shell)
-    (setq exec-path (split-string path-from-shell path-separator))))
-
-(defun add-multiple-hooks (hooks function)
-  "Triggers, for each hook in HOOKS, the specified FUNCTION."
-  (mapc (lambda (hook) (add-hook hook function)) hooks))
 
 ;; Yes and No
 ;;;; Nobody likes to have to type out the full yes or no when Emacs asks. Which it does quite often. Make it one character.
 (fset 'yes-or-no-p 'y-or-n-p)
 
-;; Use package system
-(require 'package)
-(add-to-list 'package-archives '("MELPA" . "http://melpa.milkbox.net/packages/" ) t)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(package-initialize)
 
-;;;; my-packages
-(defvar my-packages)
-(setq my-packages
-      '(auto-complete autopair clojure-mode nrepl cider color-theme evil goto-last-change haskell-mode hy-mode main-line maxframe epl popup rainbow-delimiters smex undo-tree flycheck flycheck-hdevtools kibit-mode smartparens auto-indent-mode dash-at-point puppet-mode))
+;; Custom Initialization Modules
+(defvar init-base-dir (file-name-directory (or load-file-name (buffer-file-name)))
+  "The basename directory where this init file is located.")
+(defvar modules-dir (expand-file-name (concat init-base-dir "modules"))
+  "The modules directory where user level initialization modules are located; to avoid name-space conflicts all modules should be prefixed with 'init'.")
+(add-to-list 'load-path modules-dir)
+(mapc 'load (directory-files modules-dir nil "^[^#].*el$"))
 
-;;;; Install my-packages as necessary
-(let ((uninstalled-packages (filter (lambda (x) (not (package-installed-p x))) my-packages)))
-  (when (and (not (equal uninstalled-packages '()))
-	     (y-or-n-p (format "Install packages %s?" uninstalled-packages)))
-    (package-refresh-contents)
-    (mapc (lambda (x) (when (not (package-installed-p x)) (package-install x))) uninstalled-packages)))
-
-;; Custom Packages
-(add-to-list 'load-path "~/.emacs.d/custom-elisp")
-
-;; Configure window system
-(when window-system
-  (setq default-directory "~"             ; Default directory is home directory
-	mouse-wheel-scroll-amount '(1)    ; Scroll slowly
-	mouse-wheel-progressive-speed nil ; Don't change scrolling speed
-	)
-  ;; Theming for window mode only
-  (load-theme 'wombat t)
-  ;; Transparency
-  (set-frame-parameter (selected-frame) 'alpha '(95 95))
-  (add-to-list 'default-frame-alist '(alpha 95 95))
-  ;; Use Anonymous Pro font
-  (custom-set-faces '(default ((t (:height 180 :family "Anonymous Pro")))))
-  ;; Maximize frame by default
-  (maximize-frame)
-  ;; Manipulate font size with usual bindings
-  ;;;; To return to default font size, <C-x C-0>
-  (global-set-key (kbd "s-=") 'text-scale-increase)
-  (global-set-key (kbd "s--") 'text-scale-decrease)
-  (set-exec-path-from-shell-PATH))
 
 ;; Switch to other buffer
 (defun switch-to-previous-buffer ()
