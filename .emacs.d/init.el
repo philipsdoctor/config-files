@@ -21,27 +21,12 @@
 (mapc 'load (directory-files init-modules-dir nil "^[^#].*el$"))
 
 ;; Auto-indent mode
-(require 'auto-indent-mode)
+(require-package 'auto-indent-mode 'evil)
 (add-hook 'prog-mode-hook 'auto-indent-mode)
 
 ;; Flycheck mode
 (require 'flycheck)
 
-;; EVIL-mode
-(require 'evil)
-(evil-mode)
-(setq evil-default-cursor t)
-;;;; Custom behavior to keep EviL from zealously killing emacs when in window-system
-(when window-system
-  (defun save-and-kill-buffer ()
-    (interactive)
-    (save-buffer)
-    (kill-buffer))
-
-  (define-key evil-normal-state-map "ZZ" 'save-and-kill-buffer)
-  (define-key evil-normal-state-map "ZQ" 'evil-delete-buffer)
-  (evil-ex-define-cmd "q[uit]" 'evil-delete-buffer)
-  (evil-ex-define-cmd "wq" 'save-and-kill-buffer))
 
 ;;;; Hack >> and << to just indent region when in auto-indent-mode
 (add-hook 'auto-indent-mode-hook
@@ -107,6 +92,7 @@
 	(eval-region (region-beginning) (region-end) t)
         (eval-last-sexp nil))))
 (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
+(evil-set-initial-state 'emacs-lisp-mode 'normal)
 (add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
 ;;;; Clever hack so lambda shows up as λ
 (font-lock-add-keywords
