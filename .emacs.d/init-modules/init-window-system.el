@@ -8,6 +8,13 @@
 (require 'init-packages)
 (require-package 'color-theme)
 
+(if window-system
+    (progn
+	(tool-bar-mode -1)         ; No tool-bar
+	(scroll-bar-mode -1))      ; No scrollbar (TODO: Change me?)
+    (progn (menu-bar-mode -1 ))    ; No menubar
+  )
+
 (when window-system
   (setq default-directory "~"             ; Default directory is home directory
 	mouse-wheel-scroll-amount '(1)    ; Scroll slowly

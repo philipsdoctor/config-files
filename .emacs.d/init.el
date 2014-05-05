@@ -12,14 +12,6 @@
       initial-scratch-message nil  ; No scratch message
       )
 
-(if window-system
-    (progn
-	(tool-bar-mode -1)         ; No tool-bar
-	(scroll-bar-mode -1))      ; No scrollbar (TODO: Change me?)
-    (progn (menu-bar-mode -1 ))    ; No menubar
-  )
-
-
 ;; Yes and No
 ;;;; Nobody likes to have to type out the full yes or no when Emacs asks. Which it does quite often. Make it one character.
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -28,10 +20,10 @@
 ;; Custom Initialization Modules
 (defvar init-base-dir (file-name-directory (or load-file-name (buffer-file-name)))
   "The basename directory where this init file is located.")
-(defvar modules-dir (expand-file-name (concat init-base-dir "modules"))
+(defvar init-modules-dir (expand-file-name (concat init-base-dir "init-modules"))
   "The modules directory where user level initialization modules are located; to avoid name-space conflicts all modules should be prefixed with 'init'.")
-(add-to-list 'load-path modules-dir)
-(mapc 'load (directory-files modules-dir nil "^[^#].*el$"))
+(add-to-list 'load-path init-modules-dir)
+(mapc 'load (directory-files init-modules-dir nil "^[^#].*el$"))
 
 
 ;; Switch to other buffer
