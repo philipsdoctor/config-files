@@ -5,7 +5,7 @@
 ;;; Code:
 
 ;; Hy mode
-(require 'package-system-bootstrap)
+(require 'bootstrap)
 (require-package 'hy-mode 'evil)
 
 (evil-set-initial-state 'hy-mode 'normal)
@@ -16,7 +16,7 @@
 
 ;;;; Use light-table's command-return for evaluating in the REPL
 (define-key hy-mode-map
-  (kbd "<s-return>")
+  command-eval-key
   (lambda () (interactive)
     (cond
      (mark-active (lisp-eval-region (region-beginning) (region-end)))

@@ -4,16 +4,20 @@
 
 ;;; Code:
 
-(require 'package-system-bootstrap)
-(require-package 'evil)
+(require 'bootstrap)
+(require-package 'evil 'surround)
 
 ;; Enable evil-mode globally
 (evil-mode 1)
-(setq evil-default-state 'emacs            ; Make default state be emacs
-      evil-default-cursor t                ; Use fat cursor by default
-      )
+(setq
+ evil-default-state 'emacs            ; Make default state be emacs
+ evil-default-cursor t                ; Use default emacs cursor
+ )
 
-;; TODO: Make prog-mode start in normal mode
+;; All prog-modes start in normal state
+(add-hook 'prog-mode-hook (lambda () (interactive) (evil-set-initial-state major-mode 'normal)))
+;; Surround mode
+(add-hook 'prog-mode-hook 'turn-on-surround-mode)
 
 ;;;; Custom behavior to keep evil from zealously killing emacs when in window-system
 (when window-system

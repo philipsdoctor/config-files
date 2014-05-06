@@ -5,7 +5,7 @@
 ;;; Code:
 
 ;; Clojure mode
-(require 'package-system-bootstrap)
+(require 'bootstrap)
 (require-package 'clojure-mode 'flycheck 'evil 'cider) 
 
 ;;;; EVIL mode
@@ -23,7 +23,7 @@
 
 ;;;; Use light-table's command-return for evaluating in the REPL
 (define-key clojure-mode-map
-  (kbd "<s-return>")
+  command-eval-key
   (lambda () (interactive)
     (cond
      (mark-active (cider-eval-region (region-beginning) (region-end)))
@@ -33,7 +33,7 @@
      (t (cider-eval-last-sexp)))))
 
 (define-key clojure-mode-map
-  (kbd "<s-S-return>")
+  command-eval-in-repl-key
   (lambda () (interactive)
     (cond
      (mark-active (cider-insert-in-repl (buffer-substring-no-properties (region-beginning) (region-end)) t))

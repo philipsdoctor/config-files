@@ -5,7 +5,7 @@
 ;;; Code:
 
 
-(require 'package-system-bootstrap)
+(require 'bootstrap)
 (require-package 'dash-at-point 'evil)
 ;;;; EVIL key bindings
 (add-hook 'prog-mode-hook

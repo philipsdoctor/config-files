@@ -4,7 +4,10 @@
 
 ;;; Code:
 
-(require 'package-system-bootstrap)
+(require 'bootstrap)
+
+;; Highlight the current line when programming
+(add-hook 'prog-mode-hook 'hl-line-mode)
 
 (when window-system
   (tool-bar-mode -1)        ; No tool-bar
@@ -13,7 +16,7 @@
   ;; Theming for window mode only
   (require-package 'color-theme)
   (load-theme 'wombat t)    ; Use Wombat Theme
-
+  
   ;; Transparency
   (set-frame-parameter (selected-frame) 'alpha '(95 95))
   (add-to-list 'default-frame-alist '(alpha 95 95))
@@ -24,10 +27,21 @@
   
 
 (when (not window-system)
-  (progn (menu-bar-mode -1 ))    ; No menubar
-  )
+  (menu-bar-mode -1)    ; No menubar
 
-
+  ;; Set highlight color
+  (custom-set-faces
+   ;; Make diff readable
+   '(diff-added ((t (:inherit nil :background "dark blue"))))
+   '(diff-removed ((t (:inherit nil :background "dark red"))))
+   '(diff-changed ((t (:inherit nil :background "dark magenta"))))
+   '(diff-header ((t (:inherit nil :background "grey10"))))
+   '(diff-file-header ((t (:inherit nil :background "grey25"))))
+   ;; Use dark blue for selection region
+   '(region ((t (:inherit nil :background "dark blue"))))
+   ;; Use dim grey for highlights
+   '(highlight ((t (:inherit region :background "grey6"))))
+   '(hl-line ((t (:inherit highlight))))))
 
 (provide 'init-appearance)
 ;;; init-appearance.el ends here

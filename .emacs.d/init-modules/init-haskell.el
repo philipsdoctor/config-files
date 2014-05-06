@@ -5,7 +5,7 @@
 ;;; Code:
 
 ;; Haskell mode
-(require 'package-system-bootstrap)
+(require 'bootstrap)
 (require-package 'haskell-mode 'evil 'flycheck 'flycheck-hdevtools)
 
 (evil-set-initial-state 'haskell-mode 'normal)

@@ -7,7 +7,7 @@
 
 ;;; Code:
 
-(require 'package-system-bootstrap)
+(require 'bootstrap)
 
 ;; Rainbow delimiters
 (require-package 'rainbow-delimiters)
@@ -27,7 +27,7 @@
 
 ;; show-paren-mode
 (require-package 'paren)
-(set-face-background 'show-paren-match "white")
+(set-face-background 'show-paren-match "blue")
 (add-hook 'prog-mode-hook 'show-paren-mode)
 
 ;; Smartparen mode
@@ -36,12 +36,10 @@
 ;;;; EVIL key bindings
 ;;;; TODO: Make smarter
 (require-package 'evil)
-(add-hook 'smartparens-mode-hook
- (lambda ()
-   (define-key evil-normal-state-map ",>" 'sp-forward-slurp-sexp)
-   (define-key evil-normal-state-map ",." 'sp-forward-barf-sexp)
-   (define-key evil-normal-state-map ",," 'sp-backward-slurp-sexp)
-   (define-key evil-normal-state-map ",<" 'sp-backward-barf-sexp)))
+(evil-define-key 'normal smartparens-mode-map ",>" 'sp-forward-slurp-sexp)
+(evil-define-key 'normal smartparens-mode-map ",." 'sp-forward-barf-sexp)
+(evil-define-key 'normal smartparens-mode-map ",," 'sp-backward-slurp-sexp)
+(evil-define-key 'normal smartparens-mode-map ",<" 'sp-backward-barf-sexp)
 
 (provide 'init-parentheses)
 ;;; init-parentheses.el ends here

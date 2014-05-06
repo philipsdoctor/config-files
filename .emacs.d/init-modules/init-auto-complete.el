@@ -2,7 +2,7 @@
 ;;; Commentary:
 ;;; Code:
 
-(require 'package-system-bootstrap)
+(require 'bootstrap)
 (require-package 'auto-complete 'popup)
 (add-hook 'prog-mode-hook 'auto-complete-mode)
 (provide 'init-auto-complete)

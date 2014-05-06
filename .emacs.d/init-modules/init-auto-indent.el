@@ -9,7 +9,7 @@
 
 
 ;; Auto-indent mode
-(require 'package-system-bootstrap)
+(require 'bootstrap)
 (require-package 'auto-indent-mode 'evil)
 (add-hook 'prog-mode-hook 'auto-indent-mode)
 ;;;; Hack >> and << to just indent region when in auto-indent-mode and evil-normal-state

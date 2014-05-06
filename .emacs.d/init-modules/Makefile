@@ -1,4 +1,4 @@
-all: compiled-modules.elc package-system-bootstrap.elc
+all: compiled-modules.elc bootstrap.elc
 
 compile-all:
 	emacs --batch --eval "\

@@ -1,6 +1,11 @@
-;;; package-system-bootstrap -- Set up package management system
+;;; bootstrap -- Bootstrap for the init-module system
 
 ;;; Commentary:
+;;;
+;;; These are settings common to all of the init-modules
+;;;
+;;; In particular, this sets up the package management system,
+;;; and keybindings used in different modes
 
 ;;; Code:
 
@@ -27,5 +32,8 @@
      ,@(mapcar (lambda (p) `(require ,p)) packages)))
 
 
-(provide 'package-system-bootstrap)
-;;; package-system-bootstrap.el ends here
+(defvar command-eval-key (kbd "M-RET"))
+(defvar command-eval-in-repl-key (kbd "M-S-RET"))
+
+(provide 'bootstrap)
+;;; bootstrap.el ends here

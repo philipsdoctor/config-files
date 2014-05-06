@@ -4,17 +4,16 @@
 
 ;;; Code:
 
-(require 'package-system-bootstrap)
+(require 'bootstrap)
 (require-package 'flycheck 'evil)
-(evil-set-initial-state 'emacs-lisp-mode 'normal)
 
 ;;;; Use light-table's command-return for evaluating in emacs itself
 (define-key emacs-lisp-mode-map
-  (kbd "<s-return>")
+  command-eval-key
   (lambda () (interactive)
     (if mark-active
 	(eval-region (region-beginning) (region-end) t)
-        (eval-last-sexp nil))))
+      (eval-last-sexp nil))))
 
 (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
 
