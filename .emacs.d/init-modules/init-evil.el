@@ -4,7 +4,7 @@
 
 ;;; Code:
 
-(require 'init-packages)
+(require 'package-system-bootstrap)
 (require-package 'evil)
 
 ;; Enable evil-mode globally

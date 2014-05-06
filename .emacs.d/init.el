@@ -22,11 +22,15 @@
 ;; Custom Initialization Modules
 (defvar init-base-dir (file-name-directory (or load-file-name (buffer-file-name)))
   "The basename directory where this init file is located.")
-(defvar init-modules-dir (expand-file-name (concat init-base-dir "init-modules"))
+(defvar init-modules-dir (expand-file-name (concat init-base-dir "init-modules/"))
   "The modules directory where user level initialization modules are located; to avoid name-space conflicts all modules should be prefixed with 'init'.")
 (add-to-list 'load-path init-modules-dir init-base-dir)
-(mapc 'load (directory-files init-modules-dir nil "^[^#].*el$"))
 
+;; Load compiled modules if it exists; else load init modules.
+(let ((compiled-modules (expand-file-name (concat init-modules-dir "compiled-modules.elc"))))
+  (if (file-exists-p compiled-modules)
+      (require 'compiled-modules)
+      (mapc 'load (directory-files init-modules-dir nil "^init-.*el$"))))
 
 (provide 'init)
 ;;; init.el ends here

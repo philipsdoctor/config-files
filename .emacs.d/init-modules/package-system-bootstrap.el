@@ -1,4 +1,4 @@
-;;; init-packages -- Set up package management system
+;;; package-system-bootstrap -- Set up package management system
 
 ;;; Commentary:
 
@@ -26,7 +26,6 @@
 			(package-install ,p))) packages)
      ,@(mapcar (lambda (p) `(require ,p)) packages)))
 
-(require-package 'auto-complete 'popup 'smex 'undo-tree 'puppet-mode)
 
-(provide 'init-packages)
-;;; init-packages.el ends here
+(provide 'package-system-bootstrap)
+;;; package-system-bootstrap.el ends here

@@ -4,8 +4,7 @@
 
 ;;; Code:
 
-(require 'init-packages)
-;(require-package 'main-line)
+(require 'package-system-bootstrap)
 
 (when window-system
   (tool-bar-mode -1)        ; No tool-bar

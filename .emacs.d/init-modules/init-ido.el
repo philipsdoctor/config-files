@@ -2,7 +2,7 @@
 ;;; Commentary: A nice way to navigate the filesystem 
 ;;; Code:
 
-(require 'init-packages)
+(require 'package-system-bootstrap)
 (require-package 'ido)
 (ido-mode t)
 (defvar ido-enable-flex-matching)

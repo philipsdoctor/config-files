@@ -4,7 +4,7 @@
 
 ;;; Code:
 
-(require 'init-packages)
+(require 'package-system-bootstrap)
 (require-package 'flycheck 'evil)
 (evil-set-initial-state 'emacs-lisp-mode 'normal)
 

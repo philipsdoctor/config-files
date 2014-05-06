@@ -5,7 +5,7 @@
 ;;; Code:
 
 ;; Clojure mode
-(require 'init-packages)
+(require 'package-system-bootstrap)
 (require-package 'clojure-mode 'flycheck 'evil 'cider) 
 
 ;;;; EVIL mode
@@ -48,11 +48,3 @@
 ;(eval-after-load 'flycheck '(require-package 'kibit-mode))
 (add-hook 'clojure-mode-hook 'flycheck-mode)
 
-;;;; Clever hack so fn shows up as »
-(font-lock-add-keywords
- 'clojure-mode '(("(\\(fn\\)[\[[:space:]]"
-		  (0 (progn (compose-region (match-beginning 1)
-					    (match-end 1) "Î»")
-			    nil)))))
-(provide 'init-clojure)
-;;; init-clojure.el ends here

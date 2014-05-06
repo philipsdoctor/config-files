@@ -7,7 +7,7 @@
 
 ;;; Code:
 
-(require 'init-packages)
+(require 'package-system-bootstrap)
 
 ;; Rainbow delimiters
 (require-package 'rainbow-delimiters)

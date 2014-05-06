@@ -5,7 +5,7 @@
 ;;; Code:
 
 ;; Hy mode
-(require 'init-packages)
+(require 'package-system-bootstrap)
 (require-package 'hy-mode 'evil)
 
 (evil-set-initial-state 'hy-mode 'normal)
