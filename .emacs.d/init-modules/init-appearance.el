@@ -7,7 +7,6 @@
 (require 'bootstrap)
 
 ;; Highlight the current line when programming
-(add-hook 'prog-mode-hook 'hl-line-mode)
 
 (when window-system
   (tool-bar-mode -1)        ; No tool-bar
@@ -27,7 +26,8 @@
   
 
 (when (not window-system)
-  (menu-bar-mode -1)    ; No menubar
+  (menu-bar-mode -1)                        ; No menubar
+  (add-hook 'prog-mode-hook 'hl-line-mode)  ; highlight current line
 
   ;; Set highlight color
   (custom-set-faces
@@ -38,7 +38,7 @@
    '(diff-header ((t (:inherit nil :background "grey10"))))
    '(diff-file-header ((t (:inherit nil :background "grey25"))))
    ;; Use dark blue for selection region
-   '(region ((t (:inherit nil :background "dark blue"))))
+   '(region ((t (:inherit nil :background "#000001"))))
    ;; Use dim grey for highlights
    '(highlight ((t (:inherit region :background "grey6"))))
    '(hl-line ((t (:inherit highlight))))))
