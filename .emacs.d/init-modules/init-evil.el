@@ -16,10 +16,10 @@
 
 ;; All prog-modes start in normal state
 (add-hook 'prog-mode-hook (lambda () (interactive) (evil-set-initial-state major-mode 'normal)))
-;; Surround mode
-(add-hook 'prog-mode-hook 'turn-on-surround-mode)
+(add-hook 'prog-mode-hook 'turn-on-surround-mode) ; "ds(" deletes parens in normal state
 
 ;;;; Custom behavior to keep evil from zealously killing emacs when in window-system
+;;;; TODO: Incorporate http://zuttobenkyou.wordpress.com/category/emacs/
 (when window-system
   (defun save-and-kill-buffer ()
     (interactive)
