@@ -14,7 +14,8 @@
 
   ;; Theming for window mode only
   (require-package 'color-theme)
-  (load-theme 'wombat t)    ; Use Wombat Theme
+  (require-package 'noctilux-theme)
+  (load-theme 'noctilux t)
   
   ;; Transparency
   (set-frame-parameter (selected-frame) 'alpha '(95 95))
@@ -27,11 +28,12 @@
 
 (when (not window-system)
   (menu-bar-mode -1)                        ; No menubar
-  (add-hook 'prog-mode-hook 'hl-line-mode)  ; highlight current line
+  ;(add-hook 'prog-mode-hook 'hl-line-mode)  ; highlight current line
 
   ;; Set highlight color
   (custom-set-faces
    ;; Make diff readable
+   '(cursor ((t (:background "wheat" :foreground "white"))))
    '(diff-added ((t (:inherit nil :background "dark blue"))))
    '(diff-removed ((t (:inherit nil :background "dark red"))))
    '(diff-changed ((t (:inherit nil :background "dark magenta"))))

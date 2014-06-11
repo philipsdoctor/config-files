@@ -6,7 +6,7 @@
 
 ;; Clojure mode
 (require 'bootstrap)
-(require-package 'clojure-mode 'flycheck 'evil 'cider) 
+(require-package 'clojure-mode 'flycheck 'evil 'cider 'nrepl)
 
 ;;;; EVIL mode
 (require-package 'evil 'cider)
@@ -14,6 +14,8 @@
 ;;;; Make EVIL play with cider
 (evil-define-key 'normal clojure-mode-map (kbd "M-.") 'cider-jump)
 (evil-define-key 'normal clojure-mode-map (kbd "M-,") 'cider-jump-back)
+(evil-define-key 'motion clojure-mode-map "gd" 'cider-jump)
+(evil-define-key 'motion clojure-mode-map "gb" 'cider-jump-back)
 (add-hook 'clojure-mode-hook
 	  (lambda ()
 	    ;; Type :ns to change namespaces in cider repl
