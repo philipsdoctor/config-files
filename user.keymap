@@ -1,9 +1,0 @@
-{:+ {:app { "ctrl-w" [:workspace.show] }
-
-     :editor {"alt-w" [:editor.watch.watch-selection]
-              "alt-shift-w" [:editor.watch.unwatch]
-              "ctrl-alt-\\" [:smart-indent-selection]
-              "ctrl-c" [:toggle-console]
-              "ctrl-s" [:smart-indent-selection]
-              }}}
-
