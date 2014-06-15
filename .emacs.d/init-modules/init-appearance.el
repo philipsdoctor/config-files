@@ -21,8 +21,9 @@
   (set-frame-parameter (selected-frame) 'alpha '(95 95))
   (add-to-list 'default-frame-alist '(alpha 95 95))
 
-  ;; Use Anonymous Pro font
-  (custom-set-faces '(default ((t (:height 180 :family "Anonymous Pro")))))
+  (custom-set-faces
+   '(default ((t (:height 180 :family "Courier New"))))
+   '(region ((t (:inherit nil :background "#FFF" :foreground "#00C")))))
   )
   
 
@@ -40,7 +41,7 @@
    '(diff-header ((t (:inherit nil :background "grey10"))))
    '(diff-file-header ((t (:inherit nil :background "grey25"))))
    ;; Use dark blue for selection region
-   '(region ((t (:inherit nil :background "#000001"))))
+   '(region ((t (:inherit nil :foreground "#FFF" :background "#00F"))))
    ;; Use dim grey for highlights
    '(highlight ((t (:inherit region :background "grey6"))))
    '(hl-line ((t (:inherit highlight))))))
