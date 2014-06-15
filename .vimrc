@@ -23,7 +23,7 @@ NeoBundle 'mattn/webapi-vim'             " support for gist-vim
 NeoBundle 'mattn/gist-vim'               " :Gist
 NeoBundle 'Lokaltog/vim-powerline'       " status info
 NeoBundle 'kien/rainbow_parentheses.vim' " Rainbow parens!
-NeoBundle 'https://bitbucket.org/kovisoft/paredit' " paredit for greatness
+"NeoBundle 'https://bitbucket.org/kovisoft/paredit' " paredit for greatness
 NeoBundle 'tpope/vim-surround'           " Handy selection
 NeoBundle 'benmills/vimux'               " tmux integration
 NeoBundle 'altercation/vim-colors-solarized' " solarized colorscheme
