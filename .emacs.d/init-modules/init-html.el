@@ -11,5 +11,5 @@
 (add-hook 'html-mode-hook 'flycheck-mode)
 
 
-(provide 'init-hy)
+(provide 'init-html)
 ;;; init-html.el ends here
