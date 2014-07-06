@@ -7,6 +7,8 @@
 (require 'bootstrap)
 (require-package 'flycheck 'evil)
 
+(evil-set-initial-state 'emacs-lisp-mode 'normal)
+
 ;;;; Use light-table's command-return for evaluating in emacs itself
 (define-key emacs-lisp-mode-map
   command-eval-key
