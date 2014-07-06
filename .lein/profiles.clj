@@ -1,4 +1,5 @@
-{:user {:plugins [[cider/cider-nrepl "0.7.0-SNAPSHOT"]]
+{:user {:plugins [[cider/cider-nrepl "0.7.0-SNAPSHOT"]
+                  [lein-kibit "0.0.8"]]
         :dependencies [[alembic "0.2.1"]
                        [clj-stacktrace "0.2.7"]]
         :injections [(let [orig (ns-resolve (doto 'clojure.stacktrace require)
