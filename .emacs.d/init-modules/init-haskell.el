@@ -6,7 +6,8 @@
 
 ;; Haskell mode
 (require 'bootstrap)
-(require-package 'haskell-mode 'flycheck 'flycheck-hdevtools)
+(require-package 'haskell-mode 'flycheck 'flycheck-hdevtools 'evil)
+(evil-set-initial-state 'haskell-mode 'normal)
 
 ;;;; Use hdevtools for on the fly linting / static analysis
 (eval-after-load 'flycheck '(require 'flycheck-hdevtools))
