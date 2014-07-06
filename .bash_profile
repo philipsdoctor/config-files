@@ -43,7 +43,7 @@ parse_git_branch() {
 	git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/' -e 's/^/ /'
 }
 
-export PS1="[\t \w\\[$(tput setaf 2)\\]\$(parse_git_branch)\\[$(tput sgr0)\\]] $ "
+export PS1="[\t \W\\[$(tput setaf 2)\\]\$(parse_git_branch)\\[$(tput sgr0)\\]] $ "
 
 # Color ls
 alias ls="ls -G"
