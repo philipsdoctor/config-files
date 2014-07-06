@@ -6,7 +6,7 @@
 
 ;; Clojure mode
 (require 'bootstrap)
-(require-package 'clojure-mode 'flycheck 'evil 'cider 'nrepl)
+(require-package 'clojure-mode 'flycheck 'nrepl 'kibit-mode)
 
 ;;;; EVIL mode
 (require-package 'evil 'cider)
@@ -46,7 +46,6 @@
 
 
 ;;;; Use kibit for on the fly static analysis
-;; TODO: Broken, but presumably will work again?
-;(eval-after-load 'flycheck '(require-package 'kibit-mode))
+(eval-after-load 'flycheck '(require-package 'kibit-mode))
 (add-hook 'clojure-mode-hook 'flycheck-mode)
 
