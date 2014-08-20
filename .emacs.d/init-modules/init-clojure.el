@@ -48,4 +48,3 @@
 ;;;; Use kibit for on the fly static analysis
 (eval-after-load 'flycheck '(require-package 'kibit-mode))
 (add-hook 'clojure-mode-hook 'flycheck-mode)
-
