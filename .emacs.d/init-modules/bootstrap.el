@@ -27,8 +27,8 @@
   "Install given PACKAGES, running PACKAGE-REFRESH-CONTENTS if necessary."
   `(progn
      ,@(mapcar (lambda (p) `(when (not (package-installed-p ,p))
-			(package-refresh-contents-if-necessary)
-			(package-install ,p))) packages)
+                        (package-refresh-contents-if-necessary)
+                        (package-install ,p))) packages)
      ,@(mapcar (lambda (p) `(require ,p)) packages)))
 
 

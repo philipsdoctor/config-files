@@ -8,9 +8,9 @@
 
 (when window-system
   (setq default-directory "~"             ; Default directory is home directory
-	mouse-wheel-scroll-amount '(1)    ; Scroll slowly
-	mouse-wheel-progressive-speed nil ; Don't change scrolling speed
-	)
+        mouse-wheel-scroll-amount '(1)    ; Scroll slowly
+        mouse-wheel-progressive-speed nil ; Don't change scrolling speed
+        )
 
   ;; Manipulate font size with usual bindings
   ;;;; To return to default font size, <C-x C-0>
