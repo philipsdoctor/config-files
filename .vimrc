@@ -23,7 +23,7 @@ NeoBundle 'mattn/webapi-vim'             " support for gist-vim
 NeoBundle 'mattn/gist-vim'               " :Gist
 NeoBundle 'Lokaltog/vim-powerline'       " status info
 NeoBundle 'kien/rainbow_parentheses.vim' " Rainbow parens!
-NeoBundle 'https://bitbucket.org/kovisoft/paredit' " paredit for greatness
+"NeoBundle 'https://bitbucket.org/kovisoft/paredit' " paredit for greatness
 NeoBundle 'tpope/vim-surround'           " Handy selection
 NeoBundle 'benmills/vimux'               " tmux integration
 NeoBundle 'altercation/vim-colors-solarized' " solarized colorscheme
@@ -135,7 +135,7 @@ function SetHaskellOptions()
    
    " Slime stuff
    " Load the current file into the REPL
-   nmap <c-c><c-l> :exec("SlimeSend1 :l " . expand('%:p'))<CR>
+   nmap <silent> <c-c><c-l> :exec("SlimeSend1 :l " . expand('%:p'))<CR>
    " If we are connected to slime, reload files on write
    au BufWrite *.hs if exists('b:slime_config') | SlimeSend1 :r 
     

@@ -1,0 +1,20 @@
+startup_message off
+
+# Japanese Emoticon Support
+defutf8 on  
+
+# Captions
+#caption always  
+caption string "%{= wk}%w"
+
+# No visual bell
+vbell off
+
+# Use current shell
+shell $SHELL
+
+# Make xterm scrolling work properly with screen.
+termcapinfo xterm* ti@:te@
+
+# Share screen with others
+#multiuser on
