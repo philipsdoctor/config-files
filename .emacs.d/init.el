@@ -13,9 +13,9 @@
       )
 
 (if window-system
-  (progn
-    (tool-bar-mode -1)         ; No tool-bar
-    (scroll-bar-mode -1))      ; No scrollbar (TODO: Change me?)
+    (progn
+      (tool-bar-mode -1)         ; No tool-bar
+      (scroll-bar-mode -1))      ; No scrollbar (TODO: Change me?)
   (menu-bar-mode -1 )          ; No menubar
   )
 
@@ -32,7 +32,7 @@
 (let ((compiled-modules (expand-file-name (concat init-modules-dir compiled-module-basename))))
   (if (file-exists-p compiled-modules)
       (require 'compiled-modules)
-      (mapc 'load (directory-files init-modules-dir nil "^init-.*el$"))))
+    (mapc 'load (directory-files init-modules-dir nil "^init-.*el$"))))
 
 (provide 'init)
 ;;; init.el ends here
