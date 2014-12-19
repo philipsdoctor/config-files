@@ -5,7 +5,9 @@
 ;;; Code:
 
 (require 'bootstrap)
-(require-package 'evil 'surround)
+(require-package 'evil 
+		 ;'surround
+		 )
 
 ;; Enable evil-mode globally
 (evil-mode 1)
@@ -16,7 +18,7 @@
 
 ;; All prog-modes start in normal state
 (add-hook 'prog-mode-hook (lambda () (interactive) (evil-set-initial-state major-mode 'normal)))
-(add-hook 'prog-mode-hook 'turn-on-surround-mode) ; "ds(" deletes parens in normal state
+;(add-hook 'prog-mode-hook 'turn-on-surround-mode) ; "ds(" deletes parens in normal state
 
 ;;;; Custom behavior to keep evil from zealously killing emacs when in window-system
 ;;;; TODO: Incorporate http://zuttobenkyou.wordpress.com/category/emacs/
