@@ -13,9 +13,8 @@
   (scroll-bar-mode -1)      ; No scrollbar (TODO: Change me?)
 
   ;; Theming for window mode only
-  (require-package 'color-theme)
-  (require-package 'noctilux-theme)
-  (load-theme 'noctilux t)
+  (require-package 'monokai-theme)
+  (load-theme 'monokai t)
   
   ;; Transparency
   (set-frame-parameter (selected-frame) 'alpha '(95 95))
