@@ -38,12 +38,15 @@ export PATH=`safe_add_PATH /usr/local/share/npm/bin`
 export PATH=`safe_add_PATH /Users/mpwd/.cabal/bin`
 export PATH=`safe_add_PATH /Users/mpwd/.bin`
 
-# Set the prompt
-parse_git_branch() {
-	git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/' -e 's/^/ /'
-}
+# Set the prompt to something fancy
+if [[ $- == *i* ]] ; then
 
-export PS1="[\t \W\\[$(tput setaf 2)\\]\$(parse_git_branch)\\[$(tput sgr0)\\]] $ "
+	parse_git_branch() {
+		git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/' -e 's/^/ /'
+	}
+
+	export PS1="[\t \W\\[$(tput setaf 2)\\]\$(parse_git_branch)\\[$(tput sgr0)\\]] $ "
+fi
 
 # Color ls
 alias ls="ls -G"
@@ -124,3 +127,4 @@ if [ -x "`which src-hilite-lesspipe.sh`" ] >/dev/null; then
 fi
 
 export GOPATH="$HOME/.go/"
+export PATH=`safe_add_PATH $HOME/.go/bin`
