@@ -21,6 +21,7 @@
   ;;;; PATH will match the the user's shell.
   ;;;; This is particularly useful under Mac OS X, where GUI apps
   ;;;; are not started from a shell.
+  (setenv "TERM" "xterm-color")
   (let ((path-from-shell (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
     (setenv "PATH" path-from-shell)
     (setq exec-path (split-string path-from-shell path-separator))))
