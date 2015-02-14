@@ -12,6 +12,7 @@
 ;; Rainbow delimiters
 (require-package 'rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+
 ;;;; Set the colors for rainbow-delimiters mode
 (set-face-background 'rainbow-delimiters-unmatched-face "red")
 (set-face-foreground 'rainbow-delimiters-unmatched-face "black")
@@ -33,6 +34,7 @@
 ;; Smartparen mode
 (require-package 'smartparens)
 (add-hook 'prog-mode-hook 'smartparens-mode)
+
 ;;;; EVIL key bindings
 ;;;; TODO: Make smarter
 (require-package 'evil)

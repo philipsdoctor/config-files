@@ -3,8 +3,8 @@
 ;;; Code:
 
 (require 'bootstrap)
-(require-package 'auto-complete 'popup)
-(add-hook 'prog-mode-hook 'auto-complete-mode)
+(require-package 'company)
+(add-hook 'prog-mode-hook 'company-mode)
 (provide 'init-auto-complete)
 
 ;;; init-auto-complete.el ends here

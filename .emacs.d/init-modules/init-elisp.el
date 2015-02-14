@@ -10,12 +10,21 @@
 (evil-set-initial-state 'emacs-lisp-mode 'normal)
 
 ;;;; Use light-table's command-return for evaluating in emacs itself
-(define-key emacs-lisp-mode-map
+(define-key
+  emacs-lisp-mode-map
   command-eval-key
   (lambda () (interactive)
     (if mark-active
-	(eval-region (region-beginning) (region-end) t)
+        (eval-region (region-beginning) (region-end) t)
       (eval-last-sexp nil))))
+
+(define-key
+  emacs-lisp-mode-map
+  (kbd "C-c C-l")
+  (lambda () (interactive)
+    (eval-buffer)
+    (message "Elisp evaluated %s"
+             (buffer-file-name))))
 
 (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
 
@@ -24,9 +33,10 @@
  'emacs-lisp-mode
  '(("(\\(lambda\\)\\>"
     (0 (prog1 ()
-	 (compose-region (match-beginning 1)
-			 (match-end 1)
-			 ?λ))))))
+         (compose-region
+          (match-beginning 1)
+          (match-end 1)
+          ?λ))))))
 
 (provide 'init-elisp)
 ;;; init-elisp.el ends here

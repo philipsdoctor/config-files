@@ -8,6 +8,7 @@
 (require 'bootstrap)
 (require-package 'clojure-mode 
 		 'flycheck
+		 'evil
 		 ;'kibit-mode
 		 )
 

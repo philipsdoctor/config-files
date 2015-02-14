@@ -4,7 +4,6 @@
 
 ;;; Code:
 
-;; Hy mode
 (require 'bootstrap)
 (require-package 'json-mode 'flymake-json)
 

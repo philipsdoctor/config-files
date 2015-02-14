@@ -9,8 +9,7 @@ compile-all:
 	"
 
 compiled-modules.el: $(shell ls init-*.el)
-	cat $^ \
-	| grep -v '(provide .*)$$' > $@
+	cat $^ | grep -v '(provide .*)$$' > $@
 	echo "(provide '${@:.el=})" >> $@
 
 %.elc : %.el

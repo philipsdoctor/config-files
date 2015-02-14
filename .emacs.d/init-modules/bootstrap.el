@@ -10,8 +10,8 @@
 ;;; Code:
 
 (require 'package)
-;(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
-;(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/" ) t)
+                                        ;(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
+                                        ;(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/" ) t)
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/" ) t)
 (package-initialize)
 
@@ -20,16 +20,21 @@
   "States whether we have refreshed the packages or not.")
 (defun package-refresh-contents-if-necessary ()
   "Run PACKAGE-REFRESH-CONTENTS if it hasn't been run already."
-    (when (not *packages-refreshed*)
-      (package-refresh-contents)
-      (setq *packages-refreshed* t)))
+  (when (not *packages-refreshed*)
+    (package-refresh-contents)
+    (setq *packages-refreshed* t)))
 
 (defmacro require-package (&rest packages)
   "Install given PACKAGES, running PACKAGE-REFRESH-CONTENTS if necessary."
   `(progn
-     ,@(mapcar (lambda (p) `(when (not (package-installed-p ,p))
-                        (package-refresh-contents-if-necessary)
-                        (package-install ,p))) packages)
+     ,@(mapcar
+        (lambda (p)
+          `(when (not (or
+                       (require ,p nil 'noerror)
+                       (package-installed-p ,p)))
+             (package-refresh-contents-if-necessary)
+             (package-install ,p))) 
+	packages)
      ,@(mapcar (lambda (p) `(require ,p)) packages)))
 
 
