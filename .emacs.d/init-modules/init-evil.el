@@ -5,9 +5,9 @@
 ;;; Code:
 
 (require 'bootstrap)
-(require-package 'evil 
-		 ;'surround
-		 )
+(require-package 'evil
+         ;'surround
+         )
 
 ;; Enable evil-mode globally
 (evil-mode 1)
@@ -32,6 +32,17 @@
   (define-key evil-normal-state-map "ZQ" 'evil-delete-buffer)
   (evil-ex-define-cmd "q[uit]" 'evil-delete-buffer)
   (evil-ex-define-cmd "wq" 'save-and-kill-buffer))
+
+; Override the default x-select-text function because it doesn't
+; respect x-select-enable-clipboard on OS X.
+(defun x-select-text (text)
+  "Dummy function that does nothing with TEXT.")
+(defvar x-select-enable-clipboard nil)
+(defvar x-select-enable-primary nil)
+(defvar mouse-drag-copy-region nil)
+
+(setq interprogram-cut-function 'ns-set-pasteboard)
+(setq interprogram-paste-function 'ns-get-pasteboard)
 
 (provide 'init-evil)
 ;;; init-evil.el ends here
