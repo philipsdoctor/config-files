@@ -128,3 +128,6 @@ fi
 
 export GOPATH="$HOME/.go/"
 export PATH=`safe_add_PATH $HOME/.go/bin`
+export PKG_CONFIG_PATH=`brew --prefix qt5`/lib/pkgconfig
+export QT5VERSION=`pkg-config --modversion Qt5Core`
+export CGO_CPPFLAGS=-I`brew --prefix qt5`/include/QtCore/$QT5VERSION/QtCore
