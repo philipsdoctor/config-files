@@ -32,8 +32,9 @@ NeoBundle 'majutsushi/tagbar'            " tagbar
 NeoBundle 'bitc/vim-hdevtools'           " hdevtools integration for Haskell
 NeoBundle 'guns/vim-clojure-static'      " syntax file
 NeoBundle 'tpope/vim-fireplace'          " nREPL client
-NeoBundle 'hylang/vim-hy'                " syntax file
+NeoBundle 'hylang/vim-hy'                " hy
 NeoBundle 'tpope/vim-classpath'          " mvn/lein classpath stuff
+NeoBundle 'fatih/vim-go'                 " golang
 
 NeoBundle 'ivanov/vim-ipython'
 let g:ipy_perform_mappings = 1 " vim-ipython is weird
