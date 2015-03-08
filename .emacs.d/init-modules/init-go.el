@@ -25,19 +25,33 @@
   (local-set-key (kbd "M-,") 'pop-tag-mark))
 (add-hook 'go-mode-hook #'set-godef-jumping-keys)
 
-;; ;; Show type info of thing under cursor in minibuffer
+;; godoc
+;; go get golang.org/x/tools/cmd/godoc
+(add-hook
+ 'go-mode-hook
+ (lambda ()
+   (evil-ex-define-cmd "godoc" 'godoc)
+   (define-key evil-normal-state-map ",?" 'godoc)))
+
+;; godef-describe hacks
+(add-hook
+ 'go-mode-hook
+ (lambda ()
+   (evil-ex-define-cmd "type" 'godef-describe)
+   (evil-ex-define-cmd "godef-describe" 'godef-describe)))
+
 ;; (defvar last-post-command-position 0
 ;;   "Holds the cursor position from the last run of post-command-hooks.")
-
+;;
 ;; (make-variable-buffer-local 'last-post-command-position)
-
+;;
 ;; (defun godef-describe-if-moved-post-command ()
 ;;   "Run 'godef-decribe' in the event that the pointer has moved."
 ;;   (interactive)
 ;;   (unless (equal (point) last-post-command-position)
 ;;     (godef-describe (point)))
 ;;   (setq last-post-command-position (point)))
-
+;;
 ;; (add-to-list 'post-command-hook #'godef-describe-if-moved-post-command)
 
 ;; gofmt smart formatting

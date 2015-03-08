@@ -6,7 +6,7 @@
 
 ;; Haskell mode
 (require 'bootstrap)
-(require-package 'haskell-mode 'flycheck 'flycheck-hdevtools 'evil)
+(require-package 'haskell-mode 'flycheck 'flycheck-hdevtools 'evil 'auto-complete)
 (evil-set-initial-state 'haskell-mode 'normal)
 
 ;;;; Use hdevtools for on the fly linting / static analysis
@@ -14,14 +14,7 @@
 (add-hook 'haskell-mode-hook 'flycheck-mode)
 
 ;;;; Auto-indent
-(add-hook 'haskell-mode-hook
-	  (lambda ()
-	    (auto-indent-mode 0)  ; auto-indent-mode is broken for Haskell
-	    (turn-on-haskell-indentation)
-	    ))
-
-;;;; Auto-complete (requires ghc-mod?)
-(add-hook 'haskell-mode-hook 'auto-complete)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 
 ;;;; Pretty lambdas for Haskell
 ;(defvar haskell-font-lock-symbols)
