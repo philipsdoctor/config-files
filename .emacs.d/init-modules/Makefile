@@ -21,4 +21,4 @@ compiled-modules.el: $(shell ls init-*.el)
 	"
 
 clean :
-	rm -f compiled-modules.el *.elc
+	rm -f compiled-modules.el *.elc *~
