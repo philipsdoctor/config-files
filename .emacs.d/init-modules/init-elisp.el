@@ -9,7 +9,7 @@
 
 (evil-set-initial-state 'emacs-lisp-mode 'normal)
 
-;;;; Use light-table's command-return for evaluating in emacs itself
+;;;; meta-return for evaluating in emacs itself
 (define-key
   emacs-lisp-mode-map
   command-eval-key
@@ -26,6 +26,8 @@
     (message "Elisp evaluated %s"
              (buffer-file-name))))
 
+
+;; flycheck mode
 (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
 
 ;;;; Clever hack so lambda shows up as λ
@@ -37,6 +39,12 @@
           (match-beginning 1)
           (match-end 1)
           ?λ))))))
+
+(add-hook
+ 'before-save-hook
+ (lambda () (when (equal major-mode 'emacs-lisp-mode)
+         (indent-region (point-min) (point-max)))
+   nil))
 
 (provide 'init-elisp)
 ;;; init-elisp.el ends here
