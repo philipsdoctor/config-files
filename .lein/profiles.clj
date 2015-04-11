@@ -1,9 +1,10 @@
-{:user {:plugins [[cider/cider-nrepl "0.8.2-SNAPSHOT"]
+{:user {:plugins [[cider/cider-nrepl "0.9.0-SNAPSHOT"]
                   [lein-pprint "1.1.1"]
                   [lein-kibit "0.0.8"]
                   [com.jakemccrary/lein-test-refresh "0.5.2"]
                   [com.palletops/lein-shorthand "0.4.0"]]
         :dependencies [[alembic "0.3.2"]
+                       [org.clojure/tools.nrepl "0.2.7"]
                        [clj-stacktrace "0.2.8"]]
         :shorthand {. [alembic.still/distill alembic.still/lein]}}
         :injections [(let [orig (ns-resolve (doto 'clojure.stacktrace require)
