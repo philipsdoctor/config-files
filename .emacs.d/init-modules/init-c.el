@@ -7,6 +7,16 @@
 
 (require 'bootstrap)
 (require-package 'cc-mode 'cpputils-cmake 'flycheck 'cl-macs)
+
+;; ggtags
+;; https://github.com/leoliu/ggtags
+;; - Install exuberant-ctags
+;;   > brew install ctags-exuberant
+;; - Install pygments
+;;   > pip install pygments
+;; (add-hook 'c-mode-common-hook 'ggtags-mode)
+
+;; Use CMake when possible for flycheck
 (add-hook
  'c-mode-common-hook
  (lambda ()
@@ -15,6 +25,7 @@
      (cppcm-reload-all)
      (flycheck-mode))))
 
+;; Drop into debugger
 (global-set-key
  (kbd "C-c C-g")
  '(lambda ()(interactive)
@@ -24,16 +35,14 @@
 (setq compilation-scroll-output 'first-error)
 (evil-set-initial-state 'c-mode 'normal)
 (evil-set-initial-state 'c++-mode 'normal)
-(setq c-basic-offset 4
-      c-default-style "linux")
-(define-key c-mode-map (kbd "C-c C-l") 'compile)
-(define-key c++-mode-map (kbd "C-c C-l") 'compile)
 
 ;; TODO: Use Astyle for indenting when possible
+(setq c-basic-offset 4
+      c-default-style "linux")
 
-;;(defun find-file-up (file-name)
-;; "Recursively search parent directories for a specified FILE-NAME."
-;;  t)
+;; Compile
+(define-key c-mode-map (kbd "C-c C-l") 'compile)
+(define-key c++-mode-map (kbd "C-c C-l") 'compile)
 
 (provide 'init-c)
 ;;; init-c.el ends here
