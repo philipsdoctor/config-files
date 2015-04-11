@@ -11,8 +11,8 @@
 (add-hook 'prog-mode-hook 'ethan-wspace-mode)
 (add-hook
  'before-save-hook
- (lambda () (if (not indent-tabs-mode)
-           (untabify (point-min) (point-max)))
+ (lambda () (when (not indent-tabs-mode)
+         (untabify (point-min) (point-max)))
    nil ))
 (provide 'init-ethan-wspace)
 ;;; init-ethan-wspace.el ends here
