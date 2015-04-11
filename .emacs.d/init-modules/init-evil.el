@@ -16,9 +16,16 @@
  evil-default-cursor t                ; Use default emacs cursor
  )
 
+;; TODO: More modes?
+(define-key evil-normal-state-map (kbd "C-a") 'move-beginning-of-line)
+(define-key evil-normal-state-map (kbd "C-e") 'move-end-of-line)
+(define-key evil-visual-state-map (kbd "C-a") 'move-beginning-of-line)
+(define-key evil-visual-state-map (kbd "C-e") 'move-end-of-line)
+(define-key evil-insert-state-map (kbd "C-a") 'move-beginning-of-line)
+(define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
+
 ;; All prog-modes start in normal state
 (add-hook 'prog-mode-hook (lambda () (interactive) (evil-set-initial-state major-mode 'normal)))
-;(add-hook 'prog-mode-hook 'turn-on-surround-mode) ; "ds(" deletes parens in normal state
 
 ;;;; Custom behavior to keep evil from zealously killing emacs when in window-system
 ;;;; TODO: Incorporate http://zuttobenkyou.wordpress.com/category/emacs/
