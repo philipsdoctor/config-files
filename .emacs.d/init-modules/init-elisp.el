@@ -5,7 +5,7 @@
 ;;; Code:
 
 (require 'bootstrap)
-(require-package 'flycheck 'evil)
+(require-package 'flycheck 'evil 'multiple-cursors)
 
 (evil-set-initial-state 'emacs-lisp-mode 'normal)
 
