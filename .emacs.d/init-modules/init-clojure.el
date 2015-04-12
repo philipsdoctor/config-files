@@ -6,7 +6,7 @@
 
 ;; Clojure mode
 (require 'bootstrap)
-(require-package 'clojure-mode 'flycheck 'evil)
+(require-package 'clojure-mode 'flycheck 'evil 'multiple-cursors 'slamhound)
 
 ;;;; EVIL mode
 (require-package 'evil 'cider)
@@ -26,8 +26,12 @@
 (add-hook
  'clojure-mode-hook
  (lambda ()
+   ;; Fix namespace
+   (evil-ex-define-cmd "slam[hound]" 'slamhound)
+   ;; Rename a symbol
+   (evil-ex-define-cmd "re[factor]" 'mc/mark-all-like-this-dwim)
    ;; Find a symbol
-   (evil-ex-define-cmd "find" 'cide-jump)
+   (evil-ex-define-cmd "def[inition]" 'cider-jump)
    ;; Type :ns to change namespaces in cider repl
    (evil-ex-define-cmd "ns" 'cider-repl-set-ns)))
 

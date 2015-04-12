@@ -4,6 +4,7 @@
                   [com.jakemccrary/lein-test-refresh "0.5.2"]
                   [com.palletops/lein-shorthand "0.4.0"]]
         :dependencies [[alembic "0.3.2"]
+                       [slamhound "1.5.5"]
                        [org.clojure/tools.nrepl "0.2.7"]
                        [clj-stacktrace "0.2.8"]]
         :shorthand {. [alembic.still/distill alembic.still/lein]}}
