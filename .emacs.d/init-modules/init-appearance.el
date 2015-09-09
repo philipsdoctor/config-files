@@ -15,7 +15,7 @@
   ;; Theming for window mode only
   (require-package 'monokai-theme)
   (load-theme 'monokai t)
-  
+
   ;; Transparency
   (set-frame-parameter (selected-frame) 'alpha '(95 95))
   (add-to-list 'default-frame-alist '(alpha 95 95))
@@ -24,11 +24,11 @@
    '(default ((t (:height 180 :family "Courier New"))))
    '(region ((t (:inherit nil :background "#FFF" :foreground "#00C")))))
   )
-  
+
 
 (when (not window-system)
-  (menu-bar-mode -1)                        ; No menubar
-  ;(add-hook 'prog-mode-hook 'hl-line-mode)  ; highlight current line
+  (menu-bar-mode -1)                         ; No menubar
+                                        ;(add-hook 'prog-mode-hook 'hl-line-mode)  ; highlight current line
 
   ;; Set highlight color
   (custom-set-faces

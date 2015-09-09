@@ -9,14 +9,24 @@
 
 (evil-set-initial-state 'emacs-lisp-mode 'normal)
 
-;;;; meta-return for evaluating in emacs itself
+(defun eval-region-or-expression ()
+  "Evaluate a region or expression in elisp."
+  (interactive)
+  (if mark-active
+      (eval-region (region-beginning) (region-end) t)
+    (eval-last-sexp nil)))
+
+;;;; Meta-return for evaluating in emacs itself
 (define-key
   emacs-lisp-mode-map
   command-eval-key
-  (lambda () (interactive)
-    (if mark-active
-        (eval-region (region-beginning) (region-end) t)
-      (eval-last-sexp nil))))
+  'eval-region-or-expression)
+
+;;;; C-c C-c for evaluating in emacs itself
+(define-key
+  emacs-lisp-mode-map
+  command-eval-in-repl-key
+  'eval-region-or-expression)
 
 (define-key
   emacs-lisp-mode-map
@@ -43,8 +53,7 @@
 (add-hook
  'before-save-hook
  (lambda () (when (equal major-mode 'emacs-lisp-mode)
-         (indent-region (point-min) (point-max)))
-   nil))
+         (indent-region (point-min) (point-max)))))
 
 (provide 'init-elisp)
 ;;; init-elisp.el ends here

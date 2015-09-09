@@ -31,8 +31,8 @@
  '(lambda ()(interactive)
     (gud-gdb (concat "lldb " (cppcm-get-exe-path-current-buffer)))))
 
-;(setq compilation-scroll-output t)
-(setq compilation-scroll-output 'first-error)
+;;(setq compilation-scroll-output t)
+(defvar compilation-scroll-output 'first-error)
 (evil-set-initial-state 'c-mode 'normal)
 (evil-set-initial-state 'c++-mode 'normal)
 

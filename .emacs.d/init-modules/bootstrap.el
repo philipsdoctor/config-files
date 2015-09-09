@@ -10,8 +10,8 @@
 ;;; Code:
 
 (require 'package)
-                                        ;(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
-                                        ;(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/" ) t)
+;;(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
+;;(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/" ) t)
 (add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/" ) t)
 (package-initialize)
 
@@ -33,13 +33,13 @@
                        (require ,p nil 'noerror)
                        (package-installed-p ,p)))
              (package-refresh-contents-if-necessary)
-             (package-install ,p))) 
-	packages)
+             (package-install ,p)))
+        packages)
      ,@(mapcar (lambda (p) `(require ,p)) packages)))
 
 
 (defvar command-eval-key (kbd "M-RET"))
-(defvar command-eval-in-repl-key (kbd "M-S-RET"))
+(defvar command-eval-in-repl-key [?\C-c ?\C-c])
 
 (provide 'bootstrap)
 ;;; bootstrap.el ends here
