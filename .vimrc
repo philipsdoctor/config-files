@@ -1,16 +1,34 @@
-" NeoBundle
+" Note: Skip initialization for vim-tiny or vim-small.
+if !1 | finish | endif
+
 if has('vim_starting')
- set nocompatible
- set runtimepath+=~/.vim/bundle/neobundle.vim/
+  if &compatible
+    set nocompatible               " Be iMproved
+  endif
+
+  " Required:
+  set runtimepath+=~/.vim/bundle/neobundle.vim/
 endif
-call neobundle#rc(expand('~/.vim/bundle/'))
+
+" Required:
+call neobundle#begin(expand('~/.vim/bundle/'))
+
+" Let NeoBundle manage NeoBundle
+" Required:
 NeoBundleFetch 'Shougo/neobundle.vim'
-NeoBundle 'Shougo/vimproc', {
-\    'build' : {
-\        'unix': 'make -f make_unix.mak',
-\        'mac': 'make -f make_mac.mak',
-\    },
-\}
+
+" My Bundles here:
+" Refer to |:NeoBundle-examples|.
+" Note: You don't set neobundle setting in .gvimrc!
+
+call neobundle#end()
+
+" Required:
+filetype plugin indent on
+
+" If there are uninstalled bundles found on startup,
+" this will conveniently prompt you to install them.
+NeoBundleCheck
 
 " My Bundles here:
 NeoBundle 'jpalardy/vim-slime'
@@ -40,7 +58,7 @@ NeoBundle 'ivanov/vim-ipython'
 let g:ipy_perform_mappings = 1 " vim-ipython is weird
 
 " Tab to complete
-NeoBundle 'ervandew/supertab'	
+NeoBundle 'ervandew/supertab'
 let g:SuperTabDefaultCompletionType = "context"
 let g:SuperTabContextDefaultCompletionType = "<c-x><c-o>"
 
@@ -126,47 +144,47 @@ let g:slime_target = "tmux"
 let g:slime_paste_file = tempname()
 
 function SetHaskellOptions()
-   set tabstop=8                   "A tab is 8 spaces
-   set expandtab                   "Always uses spaces instead of tabs
-   set softtabstop=4               "Insert 4 spaces when tab is pressed
-   set shiftwidth=4                "An indent is 4 spaces
-   set smarttab                    "Indent instead of tab at start of line
-   set shiftround                  "Round spaces to nearest shiftwidth multiple
-   set nojoinspaces                "Don't convert spaces to tabs
-   
-   " Slime stuff
-   " Load the current file into the REPL
-   nmap <silent> <c-c><c-l> :exec("SlimeSend1 :l " . expand('%:p'))<CR>
-   " If we are connected to slime, reload files on write
-   au BufWrite *.hs if exists('b:slime_config') | SlimeSend1 :r 
+    set tabstop=8                   "A tab is 8 spaces
+    set expandtab                   "Always uses spaces instead of tabs
+    set softtabstop=4               "Insert 4 spaces when tab is pressed
+    set shiftwidth=4                "An indent is 4 spaces
+    set smarttab                    "Indent instead of tab at start of line
+    set shiftround                  "Round spaces to nearest shiftwidth multiple
+    set nojoinspaces                "Don't convert spaces to tabs
     
-   " Type inspection
-   " Hit F1 over something to see its type
-   nmap <F1> :HdevtoolsType<CR>
-   nmap <silent> <F2> :HdevtoolsClear<CR>
+    " Slime stuff
+    " Load the current file into the REPL
+    nmap <silent> <c-c><c-l> :exec("SlimeSend1 :l " . expand('%:p'))<CR>
+    " If we are connected to slime, reload files on write
+    au BufWrite *.hs if exists('b:slime_config') | SlimeSend1 :r 
+     
+    " Type inspection
+    " Hit F1 over something to see its type
+    nmap <F1> :HdevtoolsType<CR>
+    nmap <silent> <F2> :HdevtoolsClear<CR>
 endfunction
 
 autocmd BufNewFile,BufRead *.hs call SetHaskellOptions()
 
 function SetClojureOptions()
-	set filetype=clojure
+    set filetype=clojure
 endfunction
 autocmd BufNewFile,BufRead *.clj call SetClojureOptions()
  
 """ not really a repl, but good enough for feedback
 function SetClojurePyOptions()
-	call SetClojureOptions()
-	map <Leader>r :!clojurepy %<CR>
+     call SetClojureOptions()
+     map <Leader>r :!clojurepy %<CR>
 endfunction
  
  
 function VimuxSlime()
-	if !exists("g:VimuxRunnerIndex") || _VimuxHasRunner(g:VimuxRunnerIndex) == -1
-		call VimuxOpenRunner()
-	endif
+     if !exists("g:VimuxRunnerIndex") || _VimuxHasRunner(g:VimuxRunnerIndex) == -1
+         call VimuxOpenRunner()
+     endif
 
-	call VimuxSendText(@v)
-	call VimuxSendKeys("Enter")
+     call VimuxSendText(@v)
+     call VimuxSendKeys("Enter")
 endfunction
 ""
 let mapleader = ","
@@ -184,6 +202,5 @@ nmap <LocalLeader>E va(<Leader>vs<CR>
 nmap <LocalLeader>b ggVG<Leader>vs<CR>
 ""
  
-autocmd BufRead,BufNewFile *.cljpy call SetClojurePyOptions()
 autocmd BufRead,BufNewFile *.cljs call SetClojureOptions()
 autocmd BufRead,BufNewFile *.cljx call SetClojureOptions()
