@@ -23,3 +23,4 @@
 *~
 .*.swp
 *.orig
+.mc-lists.el
