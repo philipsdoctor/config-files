@@ -84,7 +84,9 @@
 (add-hook
  'before-save-hook
  (lambda ()
-   (when (equal major-mode 'clojure-mode)
+   (interactive)
+   (when (or (equal major-mode 'clojure-mode)
+             (equal major-mode 'clojurescript-mode))
      (cljr-sort-ns)
      (indent-region (point-min) (point-max)))))
 
