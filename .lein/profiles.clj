@@ -1,9 +1,9 @@
-{:user {:plugins [[cider/cider-nrepl "0.9.1"]
+{:user {:plugins [[cider/cider-nrepl "0.10.0-SNAPSHOT"]
                   [lein-pprint "1.1.1"]
                   [lein-kibit "0.0.8"]
                   [com.jakemccrary/lein-test-refresh "0.5.2"]
                   [com.palletops/lein-shorthand "0.4.0"]
-                  [refactor-nrepl "1.1.0"]
+                  [refactor-nrepl "1.2.0-SNAPSHOT"]
                   ]
         :signing {:gpg-key "2ED94C0F"}
         :dependencies [[alembic "0.3.2"]
