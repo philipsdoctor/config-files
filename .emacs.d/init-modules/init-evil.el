@@ -5,9 +5,7 @@
 ;;; Code:
 
 (require 'bootstrap)
-(require-package 'evil
-         ;'surround
-         )
+(require-package 'evil)
 
 ;; Enable evil-mode globally
 (evil-mode 1)
@@ -25,7 +23,10 @@
 (define-key evil-insert-state-map (kbd "C-e") 'move-end-of-line)
 
 ;; All prog-modes start in normal state
-(add-hook 'prog-mode-hook (lambda () (interactive) (evil-set-initial-state major-mode 'normal)))
+(defun set-evil-initial-state-in-normal-mode ()
+  "Puts evil in `normal` mode in its initial state."
+  (interactive) (evil-set-initial-state major-mode 'normal))
+(add-hook 'prog-mode-hook 'set-evil-initial-state-in-normal-mode)
 
 ;;;; Custom behavior to keep evil from zealously killing emacs when in window-system
 ;;;; TODO: Incorporate http://zuttobenkyou.wordpress.com/category/emacs/

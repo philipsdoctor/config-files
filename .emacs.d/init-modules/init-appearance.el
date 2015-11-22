@@ -28,7 +28,22 @@
 
 (when (not window-system)
   (menu-bar-mode -1)                         ; No menubar
-                                        ;(add-hook 'prog-mode-hook 'hl-line-mode)  ; highlight current line
+  ;;(add-hook 'prog-mode-hook 'hl-line-mode)  ; highlight current line
+
+  (defun fix-blue-tty-colors ()
+    "Hack blue colors to be more readable on a tty with a dark background."
+    (tty-color-define "blue" 4 '(22500 22500 52000))
+    (tty-color-define "blue1" 4 '(22500 22500 52000))
+    (tty-color-define "blue2" 4 '(22500 22500 52000))
+    (tty-color-define "color-16" 16 '(22500 22500 47000))
+    (tty-color-define "color-17" 17 '(22500 22500 48000))
+    (tty-color-define "color-18" 18 '(22500 22500 49000))
+    (tty-color-define "color-19" 19 '(22500 22500 50000))
+    (tty-color-define "color-20" 20 '(22500 22500 51000))
+    (tty-color-define "color-21" 21 '(22500 22500 52000))
+    )
+
+  (add-hook 'window-setup-hook 'fix-blue-tty-colors)
 
   ;; Set highlight color
   (custom-set-faces
@@ -43,7 +58,9 @@
    '(region ((t (:inherit nil :foreground "#FFF" :background "#00F"))))
    ;; Use dim grey for highlights
    '(highlight ((t (:inherit region :background "grey6"))))
-   '(hl-line ((t (:inherit highlight))))))
+   '(hl-line ((t (:inherit highlight))))
+   )
+  )
 
 (provide 'init-appearance)
 ;;; init-appearance.el ends here

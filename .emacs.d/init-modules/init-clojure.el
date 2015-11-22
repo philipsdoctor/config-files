@@ -6,7 +6,10 @@
 
 ;; Clojure mode
 (require 'bootstrap)
-(require-package 'clojure-mode 'cider 'flycheck 'evil 'multiple-cursors 'slamhound 'clj-refactor)
+(require-package 'clojure-mode 'cider 'flycheck 'evil 'multiple-cursors 'slamhound 'clj-refactor 'inf-clojure)
+
+;; Use inferior clojure mode for clojurescript
+(add-hook 'clojurescript-mode-hook #'inf-clojure-minor-mode)
 
 ;;;; EVIL mode
 (require-package 'evil 'cider)
@@ -51,44 +54,125 @@
   command-eval-key
   (lambda () (interactive)
     (cond
-     (mark-active
-      (cider-eval-region (region-beginning)
-                         (region-end)))
-     ((equal evil-state 'normal)
+     ;; When active region, evaluate region
+     ;;;; clojure-mode
+     ((and mark-active
+           (or (equal major-mode 'clojure-mode)
+               (equal major-mode 'clojurec-mode)))
+      (cider-eval-region (region-beginning) (region-end)))
+     ;;;; clojurescript-mode
+     ((and mark-active (equal major-mode 'clojurescript-mode))
+      ;;(inf-clojure-eval-region (region-beginning) (region-end))
+      (execute-kbd-macro [?\C-c ?\C-r])
+      )
+
+     ;; When in normal evil mode and no expression selected, jigger cursor
+     ;;;; clojure-mode
+     ((and (equal evil-state 'normal)
+           (or (equal major-mode 'clojure-mode)
+               (equal major-mode 'clojurec-mode)))
+      (progn (forward-char) (cider-eval-last-sexp) (backward-char)))
+     ;;;; clojurescript-mode
+     ((and (equal evil-state 'normal) (equal major-mode 'clojurescript-mode))
       (progn (forward-char)
-             (cider-eval-last-sexp)
+             ;;(inf-clojure-eval-last-sexp)
+             (execute-kbd-macro [?\C-x ?\C-e])
              (backward-char)))
-     (t (cider-eval-last-sexp)))))
+
+     ;; Default to evaluating last cursor
+     ;;;; clojure-mode
+     ((or (equal major-mode 'clojure-mode)
+          (equal major-mode 'clojurec-mode))
+      (cider-eval-last-sexp))
+
+     ;;;; clojurescript-mode
+     ((equal major-mode 'clojurescript-mode)
+      (execute-kbd-macro [?\C-x ?\C-e])
+      ;;(inf-clojure-eval-last-sexp)
+      )
+     )))
 
 (define-key clojure-mode-map
   command-eval-in-repl-key
   (lambda () (interactive)
     (cond
-     (mark-active
-      (cider-insert-in-repl
-       (buffer-substring-no-properties
-        (region-beginning)
-        (region-end)) t))
-     ((equal evil-state 'normal)
-      (progn (forward-char)
-             (cider-insert-last-sexp-in-repl t)
-             (backward-char)))
-     (t (cider-insert-last-sexp-in-repl t)))))
+     ;; When active region, evaluate region
+     ;;;; clojure-mode
+     ((and mark-active
+           (or (equal major-mode 'clojure-mode)
+               (equal major-mode 'clojurec-mode)))
+      (cider-insert-in-repl (buffer-substring-no-properties
+                             (region-beginning)
+                             (region-end)) t))
+     ;;;; clojurescript-mode
+     ((and mark-active (equal major-mode 'clojurescript-mode))
+      (inf-clojure-eval-region (region-beginning) (region-end)))
 
+     ;; When in normal evil mode and no expression selected, jigger cursor
+     ;;;; clojure-mode
+     ((and (equal evil-state 'normal)
+           (or (equal major-mode 'clojure-mode)
+               (equal major-mode 'clojurec-mode)))
+      (progn (forward-char) (cider-insert-last-sexp-in-repl t) (backward-char)))
+     ;;;; clojurescript-mode
+     ((and (equal evil-state 'normal) (equal major-mode 'clojurescript-mode))
+      (progn (forward-char)
+             ;;(inf-clojure-eval-last-sexp) ; doesn't work use kbd-macro instead
+             (execute-kbd-macro [?\C-x ?\C-e])
+             (backward-char)))
+
+     ;; Default to evaluating last cursor
+     ;;;; clojure-mode
+     ((or (equal major-mode 'clojure-mode)
+          (equal major-mode 'clojurec-mode))
+      (cider-insert-last-sexp-in-repl t))
+     ;;;; clojurescript-mode
+     ((equal major-mode 'clojurescript-mode)
+      ;;(inf-clojure-eval-last-sexp) ; doesn't work use kbd-macro instead
+      (execute-kbd-macro [?\C-x ?\C-e])
+      ))))
 
 ;;;; Use kibit for on the fly static analysis
 ;;(eval-after-load 'flycheck '(require-package 'kibit-mode))
 (add-hook 'clojure-mode-hook 'flycheck-mode)
 
+(defun clojure-indent-file ()
+  "Indent a Clojure(Script) file."
+  (when (or (equal major-mode 'clojure-mode)
+            (equal major-mode 'clojurescript-mode))
+    (cljr-sort-ns))
+  (when (or (equal major-mode 'clojure-mode)
+            (equal major-mode 'clojurec-mode)
+            (equal major-mode 'clojurescript-mode))
+    (indent-region (point-min) (point-max))))
+
 ;; Tidy up file on write
-(add-hook
- 'before-save-hook
- (lambda ()
-   (interactive)
-   (when (or (equal major-mode 'clojure-mode)
-             (equal major-mode 'clojurescript-mode))
-     (cljr-sort-ns)
-     (indent-region (point-min) (point-max)))))
+(add-hook 'before-save-hook 'clojure-indent-file)
+
+;; https://github.com/bhauman/lein-figwheel/wiki/Running-figwheel-with-Emacs-Inferior-Clojure-Interaction-Mode
+(defun figwheel-repl ()
+  "Start a figwheel repl (for clojurescript development)."
+  (interactive)
+  (when (or (equal major-mode 'clojurescript-mode)
+            (equal major-mode 'clojurec-mode))
+    (run-clojure "lein figwheel")))
+
+(when (eq system-type 'darwin)
+  (require-package 'dash-at-point)
+  (defun set-clj-dash-at-point-docset ()
+    "Sets the `dash-at-point-docset` for Clojure."
+    (setq dash-at-point-docset "clojure,java8"))
+  (add-hook 'clojure-mode-hook 'set-clj-dash-at-point-docset)
+
+  (defun set-cljc-dash-at-point-docset ()
+    "Sets the `dash-at-point-docset` for a Clojure .cljc file."
+    (setq dash-at-point-docset "clojure,java8,javascript"))
+  (add-hook 'clojurec-mode-hook 'set-cljc-dash-at-point-docset)
+
+  (defun set-cljs-dash-at-point-docset ()
+    "Sets the `dash-at-point-docset` for ClojureScript."
+    (setq dash-at-point-docset "clojure,javascript"))
+  (add-hook 'clojurescript-mode-hook 'set-cljs-dash-at-point-docset))
 
 (provide 'init-clojure)
 ;;; init-clojure.el ends here

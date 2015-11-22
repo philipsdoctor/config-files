@@ -36,7 +36,6 @@
     (message "Elisp evaluated %s"
              (buffer-file-name))))
 
-
 ;; flycheck mode
 (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
 
@@ -50,10 +49,12 @@
           (match-end 1)
           ?λ))))))
 
-(add-hook
- 'before-save-hook
- (lambda () (when (equal major-mode 'emacs-lisp-mode)
-         (indent-region (point-min) (point-max)))))
+(defun elisp-indent-file ()
+  "Indent an elisp file."
+  (when (equal major-mode 'emacs-lisp-mode)
+    (indent-region (point-min) (point-max))))
+
+(add-hook 'before-save-hook 'elisp-indent-file)
 
 (provide 'init-elisp)
 ;;; init-elisp.el ends here

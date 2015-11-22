@@ -25,11 +25,13 @@
       (let ((path-from-shell (replace-regexp-in-string "[ \t\n]*$" "" (shell-command-to-string "$SHELL --login -i -c 'echo $PATH'"))))
         (setenv "PATH" path-from-shell)
         (setq exec-path (split-string path-from-shell path-separator))))
+
   ;; else, if we aren't in a windowing system
+
   (progn
     ;; Set up the console mouse
     (require 'mouse)
-    (xterm-mouse-mode t)
+    (xterm-mouse-mode t)          ; Toggle with xterm-mouse-mode
     (defun track-mouse (e))
     (defvar mouse-wheel-mode t)
     (defvar mouse-sel-mode t)
@@ -59,10 +61,10 @@
 (defvar mouse-wheel-follow-mouse 't)                  ;; Scroll window under mouse
 (defvar scroll-step 1)
 
-(global-set-key (kbd "<C-up>") 'shrink-window)
-(global-set-key (kbd "<C-down>") 'enlarge-window)
-(global-set-key (kbd "<C-left>") 'shrink-window-horizontally)
-(global-set-key (kbd "<C-right>") 'enlarge-window-horizontally)
+(global-set-key (kbd "ESC <up>") 'shrink-window)
+(global-set-key (kbd "ESC <down>") 'enlarge-window)
+(global-set-key (kbd "ESC <left>") 'shrink-window-horizontally)
+(global-set-key (kbd "ESC <right>") 'enlarge-window-horizontally)
 
 (provide 'init-window-system)
 ;;; init-window-system.el ends here
