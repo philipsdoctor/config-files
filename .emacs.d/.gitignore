@@ -24,3 +24,6 @@
 .*.swp
 *.orig
 .mc-lists.el
+
+# Build
+/quelpa/

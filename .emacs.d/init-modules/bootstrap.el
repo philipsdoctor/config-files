@@ -11,9 +11,13 @@
 
 (require 'package)
 ;;(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
-(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/" ) t)
 ;;(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/" ) t)
+(add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/" ) t)
 (package-initialize)
+(unless (require 'quelpa nil t)
+  (with-temp-buffer
+    (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
+    (eval-buffer)))
 
 ;; TODO: Use a closure here
 (defvar *packages-refreshed* nil
@@ -33,7 +37,9 @@
                        (require ,p nil 'noerror)
                        (package-installed-p ,p)))
              (package-refresh-contents-if-necessary)
-             (package-install ,p)))
+             (condition-case err
+                 (package-install ,p)
+               (error (quelpa ,p)))))
         packages)
      ,@(mapcar (lambda (p) `(require ,p)) packages)))
 
