@@ -41,17 +41,12 @@ NeoBundle 'mattn/webapi-vim'             " support for gist-vim
 NeoBundle 'mattn/gist-vim'               " :Gist
 NeoBundle 'Lokaltog/vim-powerline'       " status info
 NeoBundle 'kien/rainbow_parentheses.vim' " Rainbow parens!
-"NeoBundle 'https://bitbucket.org/kovisoft/paredit' " paredit for greatness
-NeoBundle 'tpope/vim-surround'           " Handy selection
 NeoBundle 'benmills/vimux'               " tmux integration
 NeoBundle 'altercation/vim-colors-solarized' " solarized colorscheme
 NeoBundle 'scrooloose/syntastic'         " Syntax checking
 NeoBundle 'majutsushi/tagbar'            " tagbar
 NeoBundle 'bitc/vim-hdevtools'           " hdevtools integration for Haskell
-NeoBundle 'guns/vim-clojure-static'      " syntax file
-NeoBundle 'tpope/vim-fireplace'          " nREPL client
 NeoBundle 'hylang/vim-hy'                " hy
-NeoBundle 'tpope/vim-classpath'          " mvn/lein classpath stuff
 NeoBundle 'fatih/vim-go'                 " golang
 
 NeoBundle 'ivanov/vim-ipython'
