@@ -6,7 +6,16 @@
 
 (require 'bootstrap)
 
-(require-package 'flycheck 'evil 'smartparens)
+(require-package
+ 'flycheck 'evil 'smartparens)
+
+;; flycheck mode
+(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
+
+;; SmartParens Mode
+(add-hook 'emacs-lisp-mode-hook 'smartparens-mode)
+(sp-with-modes '(elisp-mode) (sp-local-pair "'" nil :actions nil))
+(sp-with-modes '(elisp-mode) (sp-local-pair "`" nil :actions nil))
 
 (evil-set-initial-state 'emacs-lisp-mode 'normal)
 
@@ -40,9 +49,6 @@
 ;; Make elisp smarter about single quote
 (sp-with-modes '(elisp-mode) (sp-local-pair "'" nil :actions nil))
 (sp-with-modes '(elisp-mode) (sp-local-pair "`" nil :actions nil))
-
-;; flycheck mode
-(add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
 
 ;;;; Clever hack so lambda shows up as λ
 (font-lock-add-keywords
