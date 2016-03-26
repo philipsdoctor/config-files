@@ -21,7 +21,7 @@
 
 ;; TODO: Use a closure here
 (defvar *packages-refreshed* nil
-  "States whether we have refreshed the packages or not.")
+  "States whether we have refreshed the packages or not after boot.")
 (defun package-refresh-contents-if-necessary ()
   "Run PACKAGE-REFRESH-CONTENTS if it hasn't been run already."
   (when (not *packages-refreshed*)
@@ -33,15 +33,19 @@
   `(progn
      ,@(mapcar
         (lambda (p)
-          `(when (not (or
-                       (require ,p nil 'noerror)
-                       (package-installed-p ,p)))
-             (package-refresh-contents-if-necessary)
-             (condition-case err
-                 (package-install ,p)
-               (error (quelpa ,p)))))
+          (cond
+           ((symbolp (cadr p)) `(when (not (or (require ,p nil 'noerror)
+                                               (package-installed-p ,p)))
+                                  (package-refresh-contents-if-necessary)
+                                  (condition-case err
+                                      (package-install ,p)
+                                    (error (quelpa ,p)))))
+           ((listp (cadr p)) `(quelpa ,p))))
         packages)
-     ,@(mapcar (lambda (p) `(require ,p)) packages)))
+     ,@(mapcar (lambda (p)
+                 (when (symbolp (cadr p))
+                   `(require ,p)))
+               packages)))
 
 
 (defvar command-eval-key (kbd "M-RET"))
