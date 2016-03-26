@@ -6,6 +6,7 @@
 
 (require 'bootstrap)
 
+
 ;; Highlight the current line when programming
 
 (when window-system
@@ -13,8 +14,8 @@
   (scroll-bar-mode -1)      ; No scrollbar (TODO: Change me?)
 
   ;; Theming for window mode only
-  (require-package 'monokai-theme)
   (load-theme 'monokai t)
+  (require-package 'monokai-theme)
 
   ;; Transparency
   (set-frame-parameter (selected-frame) 'alpha '(95 95))
@@ -58,9 +59,7 @@
    '(region ((t (:inherit nil :foreground "#FFF" :background "#00F"))))
    ;; Use dim grey for highlights
    '(highlight ((t (:inherit region :background "grey6"))))
-   '(hl-line ((t (:inherit highlight))))
-   )
-  )
+   '(hl-line ((t (:inherit highlight))))))
 
 (provide 'init-appearance)
 ;;; init-appearance.el ends here
