@@ -6,13 +6,14 @@
 
 ;; Clojure mode
 (require 'bootstrap)
-(require-package 'clojure-mode 'cider 'flycheck 'evil 'multiple-cursors 'slamhound 'clj-refactor 'inf-clojure)
+(require-package 'clojure-mode 'cider 'flycheck 'evil 'multiple-cursors
+                 'clj-refactor 'inf-clojure 'smartparens)
+
 
 ;; Use inferior clojure mode for clojurescript
 (add-hook 'clojurescript-mode-hook #'inf-clojure-minor-mode)
 
 ;;;; EVIL mode
-(require-package 'evil 'cider)
 (evil-set-initial-state 'clojure-mode 'normal)
 
 ;;;; Make EVIL play with cider
@@ -33,9 +34,6 @@
 
    ;; Next error
    (evil-ex-define-cmd "next-error" 'cider-jump-to-compilation-error)
-
-   ;; Fix namespace
-   (evil-ex-define-cmd "slam[hound]" 'slamhound)
 
    ;; Find usages
    (evil-ex-define-cmd "usages" 'cljr-find-usages)
@@ -132,6 +130,11 @@
       (execute-kbd-macro [?\C-x ?\C-e])
       ))))
 
+;; Make smartparens smarter about ` and '
+(sp-with-modes '(clojure-mode clojurec-mode clojurescript-mode)
+  (sp-local-pair "`" nil :actions nil)
+  (sp-local-pair "'" nil :actions nil))
+
 ;;;; Use kibit for on the fly static analysis
 ;;(eval-after-load 'flycheck '(require-package 'kibit-mode))
 (add-hook 'clojure-mode-hook 'flycheck-mode)
@@ -150,12 +153,12 @@
 (add-hook 'before-save-hook 'clojure-indent-file)
 
 ;; https://github.com/bhauman/lein-figwheel/wiki/Running-figwheel-with-Emacs-Inferior-Clojure-Interaction-Mode
-(defun figwheel-repl ()
-  "Start a figwheel repl (for clojurescript development)."
+(defun figwheel-repl (&optional build-id)
+  "Start a figwheel repl (for clojurescript development).  User may optionally specify a BUILD-ID if they want to use figwheel with a specific build."
   (interactive)
   (when (or (equal major-mode 'clojurescript-mode)
             (equal major-mode 'clojurec-mode))
-    (run-clojure "lein figwheel")))
+    (run-clojure (concat "lein figwheel " build-id))))
 
 (when (eq system-type 'darwin)
   (require-package 'dash-at-point)
