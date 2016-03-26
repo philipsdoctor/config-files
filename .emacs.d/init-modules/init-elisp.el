@@ -6,7 +6,7 @@
 
 (require 'bootstrap)
 
-(require-package 'flycheck 'evil 'multiple-cursors 'smartparens)
+(require-package 'flycheck 'evil 'smartparens)
 
 (evil-set-initial-state 'emacs-lisp-mode 'normal)
 
@@ -37,6 +37,10 @@
     (message "Elisp evaluated %s"
              (buffer-file-name))))
 
+;; Make elisp smarter about single quote
+(sp-with-modes '(elisp-mode) (sp-local-pair "'" nil :actions nil))
+(sp-with-modes '(elisp-mode) (sp-local-pair "`" nil :actions nil))
+
 ;; flycheck mode
 (add-hook 'emacs-lisp-mode-hook 'flycheck-mode)
 
@@ -56,10 +60,6 @@
     (indent-region (point-min) (point-max))))
 
 (add-hook 'before-save-hook 'elisp-indent-file)
-
-;; Make smartparens smarter about ` and '
-(sp-with-modes '(elisp-mode)
-  (sp-local-pair "'" nil :actions nil))
 
 (provide 'init-elisp)
 ;;; init-elisp.el ends here
