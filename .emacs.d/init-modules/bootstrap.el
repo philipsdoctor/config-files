@@ -14,12 +14,21 @@
 ;;(add-to-list 'package-archives '("melpa" . "http://melpa.milkbox.net/packages/" ) t)
 (add-to-list 'package-archives '("melpa-stable" . "http://stable.melpa.org/packages/" ) t)
 (package-initialize)
-(unless (require 'quelpa nil t)
-  (with-temp-buffer
-    (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
-    (eval-buffer)))
 
-;; TODO: Use a closure here
+;; TODO: Use a closure here... lol does elisp even support this lisp feature from 1975?
+(defvar *quelpa-refreshed* nil
+  "States whether we have refreshed quelpa after boot.")
+(defun quelpa-refresh-if-necessary ()
+  "Refresh quelpa if it hasn't been already."
+  (when (not *quelpa-refreshed*)
+    (with-temp-buffer
+      (url-insert-file-contents "https://raw.github.com/quelpa/quelpa/master/bootstrap.el")
+      (eval-buffer))
+    (setq *quelpa-refreshed* t)))
+
+(unless (require 'quelpa nil t)
+  (quelpa-refresh-if-necessary))
+
 (defvar *packages-refreshed* nil
   "States whether we have refreshed the packages or not after boot.")
 (defun package-refresh-contents-if-necessary ()
@@ -40,11 +49,14 @@
                                   (condition-case err
                                       (package-install ,p)
                                     (error (quelpa ,p)))))
-           ((listp (cadr p)) `(quelpa ,p))))
+           ((listp (cadr p)) `(when (not (or (require ',(car (cadr p)) nil 'noerror)
+                                             (package-installed-p ',(car (cadr p)))))
+                                (package-refresh-contents-if-necessary)
+                                (quelpa ,p)))))
         packages)
      ,@(mapcar (lambda (p)
-                 (when (symbolp (cadr p))
-                   `(require ,p)))
+                 (cond ((symbolp (cadr p)) `(require ,p))
+                       ((listp (cadr p)) `(require ',(car (cadr p))))))
                packages)))
 
 
