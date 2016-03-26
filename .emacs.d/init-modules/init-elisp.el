@@ -1,11 +1,12 @@
 ;;; init-elisp -- Emacs lisp configuration
-
+;;;
 ;;; Commentary:
-
+;;;
 ;;; Code:
 
 (require 'bootstrap)
-(require-package 'flycheck 'evil 'multiple-cursors)
+
+(require-package 'flycheck 'evil 'multiple-cursors 'smartparens)
 
 (evil-set-initial-state 'emacs-lisp-mode 'normal)
 
@@ -55,6 +56,10 @@
     (indent-region (point-min) (point-max))))
 
 (add-hook 'before-save-hook 'elisp-indent-file)
+
+;; Make smartparens smarter about ` and '
+(sp-with-modes '(elisp-mode)
+  (sp-local-pair "'" nil :actions nil))
 
 (provide 'init-elisp)
 ;;; init-elisp.el ends here
