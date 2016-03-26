@@ -21,6 +21,12 @@
   (interactive)
   (message "%s" minor-mode-list))
 
+(when (eq system-type 'darwin)
+  (defun pbcopy ()
+    "Copy the currently selected region to the OS X system clipboard."
+    (interactive)
+    (call-process-region (point) (mark) "pbcopy")
+    (setq deactivate-mark t)))
 
 ;; Yes and No
 ;;;; Nobody likes to have to type out the full yes or no when Emacs asks. Which it does quite often. Make it one character.
