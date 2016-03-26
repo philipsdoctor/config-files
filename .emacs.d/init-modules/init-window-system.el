@@ -8,8 +8,7 @@
 
 (if window-system
     (progn
-      (setq default-directory "~"             ; Default directory is home directory
-            )
+      (setq default-directory "~")             ; Default directory is home directory
 
       ;; Manipulate font size with usual bindings
       ;; To return to default font size, <C-x C-0>
