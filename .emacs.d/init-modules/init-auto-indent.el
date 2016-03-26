@@ -12,9 +12,14 @@
 (require 'bootstrap)
 (require-package 'auto-indent-mode 'evil)
 (add-hook 'prog-mode-hook 'auto-indent-mode)
-;;;; Hack > and < to just indent region when in auto-indent-mode and evil-normal-state
-(evil-define-key 'normal auto-indent-mode-map ">" 'indent-region)
-(evil-define-key 'normal auto-indent-mode-map "<" 'indent-region)
+
+(defun indent-buffer ()
+  "Indent an entire buffer."
+  (interactive) (indent-region (point-min) (point-max)))
+
+;; Hack evil so that if you use ">" or "<" it indents the entire buffer
+(evil-define-key 'normal auto-indent-mode-map ">" 'indent-buffer)
+(evil-define-key 'normal auto-indent-mode-map "<" 'indent-buffer)
 
 ;; Never use tabs
 (setq-default indent-tabs-mode nil)
