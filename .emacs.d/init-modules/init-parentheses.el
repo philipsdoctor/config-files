@@ -35,13 +35,22 @@
 (require-package 'smartparens)
 (add-hook 'prog-mode-hook 'smartparens-mode)
 
+;; disable ' in lisp, it's the quote character!
+(sp-with-modes sp--lisp-modes
+  (sp-local-pair "'" nil :actions nil))
+
 ;;;; EVIL key bindings
-;;;; TODO: Make smarter
-(require-package 'evil)
-(evil-define-key 'normal smartparens-mode-map ",>" 'sp-forward-slurp-sexp)
-(evil-define-key 'normal smartparens-mode-map ",." 'sp-forward-barf-sexp)
-(evil-define-key 'normal smartparens-mode-map ",," 'sp-backward-slurp-sexp)
-(evil-define-key 'normal smartparens-mode-map ",<" 'sp-backward-barf-sexp)
+(require-package 'evil 'evil-leader)
+(add-hook 'smartparens-mode-hook 'evil-leader-mode)
+(add-hook 'smartparens-mode-hook
+          (lambda ()
+            ;;;; TODO: Make smarter
+            (evil-leader/set-leader ",")
+            (evil-leader/set-key
+              ">" 'sp-forward-slurp-sexp
+              "." 'sp-forward-barf-sexp
+              "<" 'sp-backward-slurp-sexp
+              "," 'sp-backward-barf-sexp)))
 
 (provide 'init-parentheses)
 ;;; init-parentheses.el ends here
