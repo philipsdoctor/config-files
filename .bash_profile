@@ -1,13 +1,11 @@
-export BASH_PROFILE="READ" # Shitty C++ style approach to avoid include loops
-
 # Make bash check its window size after a process completes
 shopt -s checkwinsize
 
 # Helpers for safely and non-redundantly adding directories to search paths
 safe_add_PATH() {
-	oIFS=$IFS
+	local oIFS=$IFS
 	IFS=':'
-	t=(${PATH})
+	local t=(${PATH})
 	unset IFS
 	for i in $* ; do
 		t=("$i" ${t[@]%%"$i"})
@@ -15,14 +13,13 @@ safe_add_PATH() {
 	# output the new array
 	IFS=':'
 	echo -n "${t[*]}"
-	unset t
 	IFS=$oIFS
 }
 
 safe_add_MANPATH() {
-	oIFS=$IFS
+	local oIFS=$IFS
 	IFS=':'
-	t=(${MANPATH})
+	local t=(${MANPATH})
 	unset IFS
 	for i in $* ; do
 		t=("$i" ${t[@]%%"$i"})
@@ -30,7 +27,6 @@ safe_add_MANPATH() {
 	# output the new array
 	IFS=':'
 	echo -n "${t[*]}"
-	unset t
 	IFS=$oIFS
 }
 
@@ -39,7 +35,7 @@ export GOPATH=${HOME}/.go
 mkdir -p $GOPATH
 
 # Set up PATH for local/homebrew installs
-export PATH=$(safe_add_PATH /usr/local/bin /usr/local/sbin /usr/local/share/npm/bin ${HOME}/.cabal/bin ${HOME}/.bin $GOPATH/bin /opt/local/bin)
+export PATH=$(safe_add_PATH /usr/local/bin /usr/local/sbin /usr/local/share/npm/bin ${HOME}/.cabal/bin ${HOME}/.bin $GOPATH/bin /opt/local/bin /Library/Java/Home/bin)
 
 if [ -x "$(which brew)" ];  then
 	export PATH=$(safe_add_PATH $(brew --prefix ruby)/bin)
@@ -132,3 +128,7 @@ if [ -x "$(which src-hilite-lesspipe.sh)" ] >/dev/null; then
 	export LESSOPEN="| src-hilite-lesspipe.sh %s"
 	export LESS="-R"
 fi
+
+# Hide the Java cup icon in OS X
+# http://stackoverflow.com/a/34323476/586893
+export JVM_OPTS="-Dapple.awt.UIElement=true"
