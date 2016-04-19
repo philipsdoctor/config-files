@@ -1,3 +1,1 @@
-{:user {:plugins [[cider/cider-nrepl "0.11.0-SNAPSHOT"]
-                  [refactor-nrepl "2.2.0"]]
-        :signing {:gpg-key "43FA2B12"}}}
+{:user {:plugins [[lein-ancient "0.6.9"]]}}
