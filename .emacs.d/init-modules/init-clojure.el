@@ -8,8 +8,10 @@
 (require 'bootstrap)
 
 (require-package
- 'clojure-mode 'cider 'flycheck 'evil
- 'clj-refactor 'inf-clojure 'smartparens)
+ 'cider
+ 'clojure-mode
+ 'flycheck 'evil
+ 'inf-clojure 'smartparens)
 
 (add-hook 'clojure-mode-hook 'smartparens-mode)
 
@@ -35,11 +37,17 @@
    ;; Next error
    (evil-ex-define-cmd "next-error" 'cider-jump-to-compilation-error)
 
-   ;; Find usages
-   (evil-ex-define-cmd "usages" 'cljr-find-usages)
-
    ;; Rename a symbol
    ;;(evil-ex-define-cmd "ref[actor]" 'mc/mark-all-like-this-dwim)
+
+   (setq nrepl-hide-special-buffers nil
+         nrepl-log-messages t
+         cider-repl-display-help-banner nil
+         cider-popup-stacktraces t
+         cider-repl-popup-stacktraces t
+         cider-repl-use-pretty-printing t
+         cider-prompt-save-file-on-load nil
+         cider-repl-history-file "~/.emacs.d/nrepl-history")
 
    ;; Find a symbol
    (evil-ex-define-cmd "def[inition]" 'cider-jump-to-var)
@@ -155,6 +163,7 @@
     (run-clojure (concat "lein figwheel " build-id))))
 
 (when (eq system-type 'darwin)
+  (setenv "LEIN_JVM_OPTS" "-Dapple.awt.UIElement=true")
   (require-package 'dash-at-point)
   (defun set-clj-dash-at-point-docset ()
     "Sets the `dash-at-point-docset` for Clojure."
