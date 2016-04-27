@@ -8,144 +8,98 @@
 (require 'bootstrap)
 
 (require-package
+ 'flycheck-clojure
+ 'flycheck
  'cider
  'clojure-mode
- 'flycheck 'evil
- 'inf-clojure 'smartparens)
+ 'evil
+ 'smartparens)
 
 (add-hook 'clojure-mode-hook 'smartparens-mode)
-
-;; Use inferior clojure mode for clojurescript
-(add-hook 'clojurescript-mode-hook #'inf-clojure-minor-mode)
 
 ;;;; EVIL mode
 (evil-set-initial-state 'clojure-mode 'normal)
 
-;;;; Make EVIL play with cider
-(defun cider-jump-immediately ()
-  "Make cider jump to a symbol definition immediately."
-  (interactive)
-  (execute-kbd-macro [?\M-x ?c ?i ?d ?e ?r ?- ?j ?u ?m ?p ?- ?t ?o ?- ?v ?a ?r return return]))
-
-(evil-define-key 'normal clojure-mode-map (kbd "M-.") 'cider-jump-immediately)
-(evil-define-key 'normal clojure-mode-map (kbd "M-,") 'cider-jump-back)
-(evil-define-key 'motion clojure-mode-map "gd" 'cider-jump-immediately)
-(evil-define-key 'motion clojure-mode-map "gb" 'cider-jump-back)
 (add-hook
  'clojure-mode-hook
  (lambda ()
+   ;;;; Make EVIL play with cider
+   (defun cider-jump-immediately ()
+     "Make cider jump to a symbol definition immediately."
+     (interactive)
+     (execute-kbd-macro [?\M-x ?c ?i ?d ?e ?r ?- ?f ?i ?n ?d ?- ?v ?a ?r return return]))
+
+   (evil-define-key 'normal clojure-mode-map (kbd "M-.") #'cider-jump-immediately)
+   (evil-define-key 'normal clojure-mode-map (kbd "M-,") #'cider-pop-back)
+   (evil-define-key 'motion clojure-mode-map "gd" #'cider-jump-immediately)
+   (evil-define-key 'motion clojure-mode-map "gb" #'cider-pop-back)
+
+
    ;; Next error
    (evil-ex-define-cmd "next-error" 'cider-jump-to-compilation-error)
 
    ;; Rename a symbol
+   ;; TODO: leave normal mode for insert mode to do this
    ;;(evil-ex-define-cmd "ref[actor]" 'mc/mark-all-like-this-dwim)
 
    (setq nrepl-hide-special-buffers nil
          nrepl-log-messages t
          cider-repl-display-help-banner nil
-         cider-popup-stacktraces t
-         cider-repl-popup-stacktraces t
+         cider-auto-jump-to-error t
          cider-repl-use-pretty-printing t
          cider-prompt-save-file-on-load nil
          cider-repl-history-file "~/.emacs.d/nrepl-history")
 
    ;; Find a symbol
-   (evil-ex-define-cmd "def[inition]" 'cider-jump-to-var)
+   (evil-ex-define-cmd "def[inition]" 'cider-find-var)
 
    ;; Type :ns to change namespaces in cider repl
    (evil-ex-define-cmd "ns" 'cider-repl-set-ns)))
 
- ;;;; Use light-table's command-return for evaluating in the REPL
+;;;; Use light-table's command-return for evaluating in the REPL
 (define-key clojure-mode-map
   command-eval-key
   (lambda () (interactive)
     (cond
      ;; When active region, evaluate region
-      ;;;; clojure-mode
-     ((and mark-active
-           (or (equal major-mode 'clojure-mode)
-               (equal major-mode 'clojurec-mode)))
+     (mark-active
       (cider-eval-region (region-beginning) (region-end)))
-      ;;;; clojurescript-mode
-     ((and mark-active (equal major-mode 'clojurescript-mode))
-      ;;(inf-clojure-eval-region (region-beginning) (region-end))
-      (execute-kbd-macro [?\C-c ?\C-r])
-      )
 
-     ;; When in normal evil mode and no expression selected, jigger cursor
-      ;;;; clojure-mode
-     ((and (equal evil-state 'normal)
-           (or (equal major-mode 'clojure-mode)
-               (equal major-mode 'clojurec-mode)))
-      (progn (forward-char) (cider-eval-last-sexp) (backward-char)))
-      ;;;; clojurescript-mode
-     ((and (equal evil-state 'normal) (equal major-mode 'clojurescript-mode))
-      (progn (forward-char)
-             ;;(inf-clojure-eval-last-sexp)
-             (execute-kbd-macro [?\C-x ?\C-e])
-             (backward-char)))
+     ((equal evil-state 'normal)
+      (save-excursion
+        (forward-char)
+        (cider-eval-last-sexp)))
 
-     ;; Default to evaluating last cursor
-      ;;;; clojure-mode
-     ((or (equal major-mode 'clojure-mode)
-          (equal major-mode 'clojurec-mode))
-      (cider-eval-last-sexp))
+     (t (cider-eval-last-sexp)))))
 
-      ;;;; clojurescript-mode
-     ((equal major-mode 'clojurescript-mode)
-      (execute-kbd-macro [?\C-x ?\C-e])
-      ;;(inf-clojure-eval-last-sexp)
-      )
-     )))
-
+;; TODO: cider-repl doesn't eval region... just copies
 (define-key clojure-mode-map
   command-eval-in-repl-key
   (lambda () (interactive)
     (cond
      ;; When active region, evaluate region
-      ;;;; clojure-mode
-     ((and mark-active
-           (or (equal major-mode 'clojure-mode)
-               (equal major-mode 'clojurec-mode)))
+     (mark-active
       (cider-insert-in-repl (buffer-substring-no-properties
                              (region-beginning)
                              (region-end)) t))
-      ;;;; clojurescript-mode
-     ((and mark-active (equal major-mode 'clojurescript-mode))
-      (inf-clojure-eval-region (region-beginning) (region-end)))
 
      ;; When in normal evil mode and no expression selected, jigger cursor
-      ;;;; clojure-mode
-     ((and (equal evil-state 'normal)
-           (or (equal major-mode 'clojure-mode)
-               (equal major-mode 'clojurec-mode)))
-      (progn (forward-char) (cider-insert-last-sexp-in-repl t) (backward-char)))
-      ;;;; clojurescript-mode
-     ((and (equal evil-state 'normal) (equal major-mode 'clojurescript-mode))
-      (progn (forward-char)
-             ;;(inf-clojure-eval-last-sexp) ; doesn't work use kbd-macro instead
-             (execute-kbd-macro [?\C-x ?\C-e])
-             (backward-char)))
+     ;;;; clojure-mode
+     ((equal evil-state 'normal)
+      (save-excursion
+        (cider-insert-last-sexp-in-repl t)
+        (cider-eval-last-sexp)))
 
-     ;; Default to evaluating last cursor
-      ;;;; clojure-mode
-     ((or (equal major-mode 'clojure-mode)
-          (equal major-mode 'clojurec-mode))
-      (cider-insert-last-sexp-in-repl t))
-      ;;;; clojurescript-mode
-     ((equal major-mode 'clojurescript-mode)
-      ;;(inf-clojure-eval-last-sexp) ; doesn't work use kbd-macro instead
-      (execute-kbd-macro [?\C-x ?\C-e])
-      ))))
+     ;; Default to evaluating last sexp
+     (t (cider-eval-last-sexp-to-repl t)))))
 
 ;; Make smartparens smarter about ` and '
 (sp-with-modes '(clojure-mode clojurec-mode clojurescript-mode)
   (sp-local-pair "`" nil :actions nil)
   (sp-local-pair "'" nil :actions nil))
 
- ;;;; Use kibit for on the fly static analysis
-;;(eval-after-load 'flycheck '(require-package 'kibit-mode))
 (add-hook 'clojure-mode-hook 'flycheck-mode)
+(eval-after-load 'flycheck '(flycheck-clojure-setup))
 
 (defun clojure-indent-file ()
   "Indent a Clojure(Script) file."
@@ -154,13 +108,20 @@
 ;; Tidy up file on write
 (add-hook 'before-save-hook 'clojure-indent-file)
 
-;; https://github.com/bhauman/lein-figwheel/wiki/Running-figwheel-with-Emacs-Inferior-Clojure-Interaction-Mode
-(defun figwheel-repl (&optional build-id)
-  "Start a figwheel repl (for clojurescript development).  User may optionally specify a BUILD-ID if they want to use figwheel with a specific build."
-  (interactive)
-  (when (or (equal major-mode 'clojurescript-mode)
-            (equal major-mode 'clojurec-mode))
-    (run-clojure (concat "lein figwheel " build-id))))
+(add-to-list 'cider-jack-in-dependencies '("com.cemerick/piggieback" "0.2.1"))
+(defun figwheel-repl (buffer)
+  "Start a figwheel repl (for clojurescript development).  Takes BUFFER as an argument."
+  (interactive "P")
+  ;; TODO: this can't be temporarily bound in the let below for some reason
+  (setq cider-cljs-lein-repl
+        "(do (require 'figwheel-sidecar.repl-api)
+             (figwheel-sidecar.repl-api/start-figwheel!)
+             (figwheel-sidecar.repl-api/cljs-repl))")
+  (let ((cider-jack-in-lein-plugins
+         (cons '("lein-figwheel" "0.5.2") cider-jack-in-lein-plugins))
+        (cider-jack-in-dependencies
+         (cons '("figwheel-sidecar" "0.5.2") cider-jack-in-dependencies)))
+    (cider-jack-in-clojurescript)))
 
 (when (eq system-type 'darwin)
   (setenv "LEIN_JVM_OPTS" "-Dapple.awt.UIElement=true")
@@ -181,4 +142,4 @@
   (add-hook 'clojurescript-mode-hook 'set-cljs-dash-at-point-docset))
 
 (provide 'init-clojure)
- ;;; init-clojure.el ends here
+;;; init-clojure.el ends here
