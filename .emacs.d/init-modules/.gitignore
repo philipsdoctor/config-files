@@ -2,4 +2,7 @@
 compiled-modules.el
 *.elc
 saved-places
+
+# CIDER
 flycheck_*
+.cljs_rhino_repl/
