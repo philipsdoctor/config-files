@@ -60,6 +60,7 @@
 (defvar mouse-wheel-follow-mouse 't)                  ;; Scroll window under mouse
 (defvar scroll-step 1)
 
+
 (global-set-key (kbd "ESC <up>") 'shrink-window)
 (global-set-key (kbd "ESC <down>") 'enlarge-window)
 (global-set-key (kbd "ESC <left>") 'shrink-window-horizontally)

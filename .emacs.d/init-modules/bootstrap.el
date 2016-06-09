@@ -61,7 +61,8 @@
 
 
 (defvar command-eval-key (kbd "M-RET"))
-(defvar command-eval-in-repl-key [?\C-c ?\C-c])
+;; Note: you may wish to set C-RET or M-SHIFT-RET to emit send the hex code "0x18 0x0A" in iTerm
+(defvar command-eval-in-repl-key (kbd "C-M-j"))
 
 (provide 'bootstrap)
 ;;; bootstrap.el ends here

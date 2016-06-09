@@ -11,6 +11,8 @@
 /url/
 /eshell/
 /auto-save-list/
+/coq/
+/site-lisp/
 
 # Files
 /saved-places

@@ -15,7 +15,12 @@
  'evil
  'smartparens)
 
+;; Use smart parens
 (add-hook 'clojure-mode-hook 'smartparens-mode)
+
+
+;; Use eldoc mode
+(add-hook 'clojure-mode-hook 'eldoc-mode)
 
 ;;;; EVIL mode
 (evil-set-initial-state 'clojure-mode 'normal)
@@ -54,7 +59,10 @@
    (evil-ex-define-cmd "def[inition]" 'cider-find-var)
 
    ;; Type :ns to change namespaces in cider repl
-   (evil-ex-define-cmd "ns" 'cider-repl-set-ns)))
+   (evil-ex-define-cmd "ns" 'cider-repl-set-ns)
+
+   (custom-set-faces
+    '(cider-result-overlay-face ((t (:foreground "#0f0")))))))
 
 ;;;; Use light-table's command-return for evaluating in the REPL
 (define-key clojure-mode-map
@@ -65,6 +73,7 @@
      (mark-active
       (cider-eval-region (region-beginning) (region-end)))
 
+     ;; When in normal evil mode and no expression selected, jigger cursor
      ((equal evil-state 'normal)
       (save-excursion
         (forward-char)
@@ -72,41 +81,43 @@
 
      (t (cider-eval-last-sexp)))))
 
-;; TODO: cider-repl doesn't eval region... just copies
+
 (define-key clojure-mode-map
   command-eval-in-repl-key
-  (lambda () (interactive)
-    (cond
-     ;; When active region, evaluate region
-     (mark-active
-      (cider-insert-in-repl (buffer-substring-no-properties
-                             (region-beginning)
-                             (region-end)) t))
+  (lambda ()
+    (interactive)
+    ;; TODO: Save-excursion doesn't work here...
+    (save-excursion
+      (cond
+       ;; When active region, evaluate region
+       (mark-active
+        (cider-insert-in-repl (buffer-substring-no-properties
+                               (region-beginning)
+                               (region-end)) t))
 
-     ;; When in normal evil mode and no expression selected, jigger cursor
-     ;;;; clojure-mode
-     ((equal evil-state 'normal)
-      (save-excursion
-        (cider-insert-last-sexp-in-repl t)
-        (cider-eval-last-sexp)))
+       ;; When in normal evil mode and no expression selected, jigger cursor
+       ((equal evil-state 'normal)
+        (forward-char)
+        (cider-insert-last-sexp-in-repl t))
 
-     ;; Default to evaluating last sexp
-     (t (cider-eval-last-sexp-to-repl t)))))
+       ;; Default to evaluating last sexp
+       (t (cider-insert-last-sexp-in-repl t))))))
 
 ;; Make smartparens smarter about ` and '
 (sp-with-modes '(clojure-mode clojurec-mode clojurescript-mode)
   (sp-local-pair "`" nil :actions nil)
   (sp-local-pair "'" nil :actions nil))
 
-(add-hook 'clojure-mode-hook 'flycheck-mode)
-(eval-after-load 'flycheck '(flycheck-clojure-setup))
+;; TODO: Not working
+;;(add-hook 'clojure-mode-hook 'flycheck-mode)
+;;(eval-after-load 'flycheck '(flycheck-clojure-setup))
 
 (defun clojure-indent-file ()
   "Indent a Clojure(Script) file."
   (indent-region (point-min) (point-max)))
 
 ;; Tidy up file on write
-(add-hook 'before-save-hook 'clojure-indent-file)
+;;(add-hook 'before-save-hook 'clojure-indent-file)
 
 (add-to-list 'cider-jack-in-dependencies '("com.cemerick/piggieback" "0.2.1"))
 (defun figwheel-repl (buffer)
