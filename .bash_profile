@@ -46,7 +46,7 @@ if [[ $- == *i* ]] ; then
 	parse_git_branch() {
 		git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/' -e 's/^/ /'
 	}
-	export PS1="[\t \W\\[$(tput setaf 2)\\]\$(parse_git_branch)\\[$(tput sgr0)\\]] $ "
+	export PS1="[\t \u@\h:\W\\[$(tput setaf 2)\\]\$(parse_git_branch)\\[$(tput sgr0)\\]] $ "
 fi
 
 # Color ls
@@ -70,6 +70,24 @@ if [ -x "$(which gs)" ] ; then
 		gs -q -dNOPAUSE -dBATCH -dPDFSETTINGS=/prepress -sDEVICE=pdfwrite -sOutputFile=$2 -c .setpdfwrite -f $1
 	}
 fi
+
+# If we are on linux, use xsel to mimic OS X's pbcopy
+if [ ! -x "$(which pbcopy)" ] ; then
+	if [ -x "$(which xsel)" ] ; then
+		alias pbcopy="xsel --clipboard --input"
+	elif [ -x "$(which xclip)" ] ; then
+		alias pbcopy="xclip -selection clipboard"
+	fi
+fi
+
+if [ ! -x "$(which pbpaste)" ] ; then
+	if [ -x "$(which xsel)" ] ; then
+		alias pbpaste="xsel --clipboard --output"
+	elif [ -x "$(which xclip)" ] ; then
+		alias pbpaste="xclip -selection clipboard -o"
+	fi
+fi
+
 
 # SBCL
 if [ -x "$(which sbcl)" ] ; then 
